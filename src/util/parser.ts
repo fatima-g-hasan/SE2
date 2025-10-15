@@ -1,10 +1,9 @@
 import { promises as fs } from 'fs';
 import { parse as csvParse } from 'csv-parse';
 import { stringify as csvStringify } from 'csv-stringify';
-import { resolve } from 'path';
 
 
-export async function readCSVFile(filePath: string): Promise<string[][]> {
+export async function readCSVFile(filePath: string, includeHeader: boolean = false): Promise<string[][]> {
   try {
     const fileContent = await fs.readFile(filePath, 'utf-8');
     return new Promise ((resolve, reject) => {
@@ -13,6 +12,7 @@ export async function readCSVFile(filePath: string): Promise<string[][]> {
         skip_empty_lines: true
       }, (err, records: string[][]) => {
         if (err) reject (err);
+        if (!includeHeader) records.shift();
         resolve(records);
       });
     });
