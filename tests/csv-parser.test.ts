@@ -1,6 +1,6 @@
 import fs from "fs";
 import path from "path";
-import { readCSVFile, writeCSVFile } from "../src/util/parser";
+import { readCSVFile, writeCSVFile } from "../src/util/csv-parser";
 
 describe("CSV Parser", () => {
   const csvPath = path.join(__dirname, "test.csv");
