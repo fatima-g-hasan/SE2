@@ -12,7 +12,7 @@ describe("JSON Parser", () => {
   });
 
   it("reads a valid JSON file correctly", () => {
-    const sampleData = { name: "Alice", age: 25 };
+    const sampleData = { author: "Dan Brown", price: 12 };
     fs.writeFileSync(jsonPath, JSON.stringify(sampleData, null, 2));
 
     const data = readJSONFile(jsonPath);
