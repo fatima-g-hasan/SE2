@@ -3,6 +3,8 @@ import { Item, ItemCategory } from "./Item.model";
 
 export class Book implements Item {
 
+
+  private orderId: number;
   private bookTitle: string;
   private author: string;
   private genre: string;
@@ -11,8 +13,11 @@ export class Book implements Item {
   private publisher: string;
   private specialEdition: string;
   private packaging: string;
+  private price: number;
+  private quantity: number;
 
   constructor(
+      orderId: number,
       bookTitle: string,
       author: string,
       genre: string,
@@ -21,7 +26,10 @@ export class Book implements Item {
       publisher: string,
       specialEdition: string,
       packaging: string,
+      price: number,
+      quantity: number,
   ) {
+      this.orderId = orderId;
       this.bookTitle = bookTitle;
       this.author = author;
       this.genre = genre;
@@ -30,10 +38,16 @@ export class Book implements Item {
       this.publisher = publisher;
       this.specialEdition = specialEdition;
       this.packaging = packaging;
+      this.price = price;
+      this.quantity = quantity;
   }
 
   getCategory(): ItemCategory {
     return ItemCategory.BOOK;
+  }
+
+  getOrderId(): number {
+    return this.orderId;
   }
 
   getBookTitle(): string {
@@ -66,5 +80,13 @@ export class Book implements Item {
 
   getPackaging(): string {
     return this.packaging;
+  }
+
+  getPrice(): number {
+    return this.price;
+  }
+  
+  getQuantity(): number {
+    return this.quantity;
   }
 }
