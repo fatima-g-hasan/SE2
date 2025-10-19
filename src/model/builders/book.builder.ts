@@ -1,5 +1,5 @@
-import { Book } from "model/Book.model";
-import logger from "util/logger";
+import { Book } from "../Book.model";
+
 
 export class BookBuilder {
   private bookTitle!: string;
@@ -52,21 +52,24 @@ export class BookBuilder {
   }
 
   build(): Book {
-    const requiredProperties = [
-      this.bookTitle,
-      this.author,
-      this.genre,
-      this.format,
-      this.language,
-      this.publisher,
-      this.specialEdition,
-      this.packaging
-    ];
+    const requiredProperties = {
+      bookTitle: "string",
+      author: "string",
+      genre: "string",
+      format: "string",
+      language: "string",
+      publisher: "string",
+      specialEdition: "string",
+      packaging: "string"
+  };
 
-    for (const property of requiredProperties) {
-      if (!property) {
-        logger.error("Missing required properties, could not build a book");
-        throw new Error("Missing required properties");
+     for (const [prop, type] of Object.entries(requiredProperties)) {
+      const value = (this as any)[prop];
+      if (value === undefined || value === null) {
+        throw new Error(`${prop} is missing`);
+      }
+      if (typeof value !== type) {
+        throw new Error(`${prop} must be a ${type}`);
       }
     }
 

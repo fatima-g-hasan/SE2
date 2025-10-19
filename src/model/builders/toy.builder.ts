@@ -1,5 +1,5 @@
-import { Toy } from "model/Toy.model";
-import logger from "util/logger";
+import { Toy } from "../Toy.model";
+
 
 export class ToyBuilder {
   private type!: string;
@@ -40,22 +40,25 @@ export class ToyBuilder {
   }
 
   build(): Toy {
-    const requiredProperties = [
-      this.type,
-      this.ageGroup,
-      this.brand,
-      this.material,
-      this.batteryRequired,
-      this.educational
-    ];
+    const requiredProperties = {
+      type: "string",
+      ageGroup: "string",
+      brand: "string",
+      material: "string",
+      batteryRequired: "boolean",
+      educational: "boolean"
+    };
 
-    for (const property of requiredProperties) {
-      if (property === undefined || property === null) {
-        logger.error("Missing required properties, could not build a toy");
-        throw new Error("Missing required properties");
+    for (const [prop, type] of Object.entries(requiredProperties)) {
+      const value = (this as any)[prop];
+      if (value === undefined || value === null) {
+        throw new Error(`${prop} is missing`);
+      }
+      if (typeof value !== type) {
+        throw new Error(`${prop} must be a ${type}`);
       }
     }
-
+    
     return new Toy(
       this.type,
       this.ageGroup,

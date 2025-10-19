@@ -1,5 +1,5 @@
-import { Cake } from "model/Cake.model";
-import logger from "util/logger";
+import { Cake } from "../Cake.model";
+
 
 export class CakeBuilder {
   private type!: string;
@@ -88,28 +88,32 @@ export class CakeBuilder {
   }
 
   build(): Cake {
-    const requiredProperties = [
-        this.type,
-        this.flavor,
-        this.filling,
-        this.size,
-        this.layers,
-        this.frostingType,
-        this.frostingFlavor,
-        this.decorationType,
-        this.decorationColor,
-        this.customMessage,
-        this.shape,
-        this.allergies,
-        this.specialIngredients,
-        this.packagingType
-    ];
-    for (const property of requiredProperties) {
-      if (!property) {
-        logger.error("Missing required properties, could not build a cake");
-        throw new Error("Misssing required properties");
+    const requiredProperties = {
+        type: "string",
+        flavor: "string",
+        filling: "string",
+        size: "number",
+        layers: "number",
+        frostingType: "string",
+        frostingFlavor: "string",
+        decorationType: "string",
+        decorationColor: "string",
+        customMessage: "string",
+        shape: "string",
+        allergies: "string",
+        specialIngredients: "string",
+        packagingType: "string",
+  };
+    for (const [prop, type] of Object.entries(requiredProperties)) {
+      const value = (this as any)[prop];
+      if (value === undefined || value === null) {
+        throw new Error(`${prop} is missing`);
+      }
+      if (typeof value !== type) {
+        throw new Error(`${prop} must be a ${type}`);
       }
     }
+
     return new Cake(
         this.type,
         this.flavor,
