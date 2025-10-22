@@ -8,6 +8,7 @@ export class CSVOrderMapper implements IMapper<string[], IOrder> {
   constructor(itemMapper: IMapper<string[], IItem>) {
     this.itemMapper = itemMapper;
   }
+
   
   map(data: string[]): IOrder {
     const item: IItem = this.itemMapper.map(data);
@@ -19,4 +20,48 @@ export class CSVOrderMapper implements IMapper<string[], IOrder> {
                        .build();
   }
   
+}
+
+
+export class JSONOrderMapper implements IMapper<Record<string, string>, IOrder> {
+  itemMapper: IMapper<Record<string, string>, IItem>;
+  constructor(itemMapper: IMapper<Record<string, string>, IItem>) {
+    this.itemMapper = itemMapper;
+  }
+
+  map(data: Record<string, string>): IOrder {
+    const item: IItem = this.itemMapper.map(data);
+    const id = data["Order ID"];
+    const price = parseInt(data["Price"]);
+    const quantity = parseInt(data["Quantity"]);
+
+    return OrderBuilder.newBuilder()
+                       .setId(id)
+                       .setItem(item)
+                       .setPrice(price)
+                       .setQuantity(quantity)
+                       .build();
+  }
+}
+
+
+export class XMLOrderMapper implements IMapper<Record<string, string>, IOrder> {
+  itemMapper: IMapper<Record<string, string>, IItem>;
+  constructor(itemMapper: IMapper<Record<string, string>, IItem>) {
+    this.itemMapper = itemMapper;
+  }
+
+  map(data: Record<string, string>): IOrder {
+    const item: IItem = this.itemMapper.map(data);
+    const id = data["OrderID"];
+    const price = parseInt(data["Price"]);
+    const quantity = parseInt(data["Quantity"]);
+
+    return OrderBuilder.newBuilder()
+                       .setId(id)
+                       .setItem(item)
+                       .setPrice(price)
+                       .setQuantity(quantity)
+                       .build();
+  }
 }
