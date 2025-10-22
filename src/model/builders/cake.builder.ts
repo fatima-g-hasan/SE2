@@ -17,6 +17,10 @@ export class CakeBuilder {
   private specialIngredients!: string;
   private packagingType!: string;
 
+  public static newBuilder(): CakeBuilder {
+    return new CakeBuilder();
+  }
+
   setType(type: string): CakeBuilder {
     this.type = type;
     return this;
