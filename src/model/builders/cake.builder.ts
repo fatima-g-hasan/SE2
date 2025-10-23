@@ -116,6 +116,10 @@ export class CakeBuilder {
       if (typeof value !== type) {
         throw new Error(`${prop} must be a ${type}`);
       }
+
+      if (type === "number" && isNaN(value)) {
+        throw new Error(`${prop} must be a valid number`);
+      }
     }
 
     return new Cake(
