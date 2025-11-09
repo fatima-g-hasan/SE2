@@ -1,9 +1,16 @@
+import { ID } from "repository/IRepository";
+
 export interface IItem {
   getCategory(): ItemCategory;
+  
+}
+
+export interface IIdentifiableItem extends IItem, ID {
+  getId(): string;
 }
 
 export enum ItemCategory {
-  CAKE,
-  BOOK,
-  TOY,
+  CAKE = "cake",
+  BOOK = "book",
+  TOY = "toy"
 }

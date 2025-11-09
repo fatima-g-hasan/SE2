@@ -1,4 +1,7 @@
-import { IItem, ItemCategory } from "./IItem";
+import { IIdentifiableItem, IItem, ItemCategory } from "./IItem";
+import {id} from "repository/IRepository";
+
+
 
 export class Cake implements IItem {
 
@@ -15,7 +18,7 @@ export class Cake implements IItem {
   private shape: string;
   private allergies: string;
   private specialIngredients: string;
-  private packagingTypes: string;
+  private packagingType: string;
 
   constructor(
       type: string,
@@ -31,7 +34,7 @@ export class Cake implements IItem {
       shape: string,
       allergies: string,
       specialIngredients: string,
-      packagingTypes: string,
+      packagingType: string,
   ) {
       this.type = type;
       this.flavor = flavor;
@@ -46,7 +49,7 @@ export class Cake implements IItem {
       this.shape = shape;
       this.allergies = allergies;
       this.specialIngredients = specialIngredients;
-      this.packagingTypes = packagingTypes;
+      this.packagingType = packagingType;
   }
 
   getCategory(): ItemCategory {
@@ -105,7 +108,49 @@ export class Cake implements IItem {
     return this.specialIngredients;
   }
 
-  getPackagingTypes(): string {
-    return this.packagingTypes;
+  getPackagingType(): string {
+    return this.packagingType;
+  }
+}
+
+export class IdentifiableCake extends Cake implements IIdentifiableItem {
+  
+  constructor(
+          private id: id,
+          type: string,
+          flavor: string,
+          filling: string,
+          size: number,
+          layers: number,
+          frostingType: string,
+          frostingFlavor: string,
+          decorationType: string,
+          decorationColor: string,
+          customMessage: string,
+          shape: string,
+          allergies: string,
+          specialIngredients: string,
+          packagingType: string,
+        ) {
+          super(
+            type,
+            flavor,
+            filling,
+            size,
+            layers,
+            frostingType,
+            frostingFlavor,
+            decorationType,
+            decorationColor,
+            customMessage,
+            shape,
+            allergies,
+            specialIngredients,
+            packagingType
+          );
+      }
+        
+  getId(): id {
+    return this.id;
   }
 }

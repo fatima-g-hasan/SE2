@@ -13,4 +13,16 @@ export class XMLToyMapper implements IMapper<Record<string, string>, Toy> {
                     .setEducational(row["Educational"] === "Yes")
                     .build();
   }
+
+  reverseMap(toy: Toy): Record<string, string> {
+    return {
+      "Type": toy.getType(),
+      "AgeGroup": toy.getAgeGroup(),
+      "Brand": toy.getBrand(),
+      "Material": toy.getMaterial(),
+      "BatteryRequired": toy.getBatteryRequired() ? "Yes" : "No",
+      "Educational": toy.getEducational() ? "Yes" : "No"
+    };
+  }
+
 }
