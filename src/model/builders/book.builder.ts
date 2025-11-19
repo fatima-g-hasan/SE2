@@ -1,4 +1,5 @@
-import { Book } from "../Book.model";
+import logger from "../../util/logger";
+import { Book, IdentifiableBook } from "../Book.model";
 
 
 export class BookBuilder {
@@ -10,6 +11,23 @@ export class BookBuilder {
   private publisher!: string;
   private specialEdition!: string;
   private packaging!: string;
+
+  public static newBuilder(): BookBuilder {
+    return new BookBuilder();
+  }
+
+  static fromExisting(book: IdentifiableBook): BookBuilder {
+  return BookBuilder.newBuilder()
+    .setBookTitle(book.getBookTitle())
+    .setAuthor(book.getAuthor())
+    .setGenre(book.getGenre())
+    .setFormat(book.getFormat())
+    .setLanguage(book.getLanguage())
+    .setPublisher(book.getPublisher())
+    .setSpecialEdition(book.getSpecialEdition())
+    .setPackaging(book.getPackaging());
+  }
+
 
   setBookTitle(bookTitle: string): BookBuilder {
     this.bookTitle = bookTitle;
@@ -82,6 +100,43 @@ export class BookBuilder {
       this.publisher,
       this.specialEdition,
       this.packaging
+    );
+  }
+}
+
+export class IdentifiableBookBuilder {
+  private id!: string;
+  private book!: Book;
+
+  static newBuilder(): IdentifiableBookBuilder {
+    return new IdentifiableBookBuilder();
+  }
+
+  setId(id: string): IdentifiableBookBuilder {
+    this.id = id;
+    return this;
+  }
+
+  setBook(book: Book): IdentifiableBookBuilder {
+    this.book = book;
+    return this;
+  }
+
+  build(): IdentifiableBook {
+    if (!this.id || !this.book) {
+      logger.error("Missing required properties, could not build an identiable book");
+      throw new Error("Missing required properties");
+    }
+    return new IdentifiableBook(
+      this.id,
+      this.book.getBookTitle(),
+      this.book.getAuthor(),
+      this.book.getGenre(),
+      this.book.getFormat(),
+      this.book.getLanguage(),
+      this.book.getPublisher(),
+      this.book.getSpecialEdition(),
+      this.book.getPackaging(),
     );
   }
 }
