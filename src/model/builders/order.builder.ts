@@ -11,6 +11,14 @@ export class OrderBuilder {
     return new OrderBuilder();
   }
 
+  static fromExisting(order: IdentifiableOrderItem): OrderBuilder {
+  return OrderBuilder.newBuilder()
+    .setItem(order.getItem())
+    .setPrice(order.getPrice())
+    .setQuantity(order.getQuantity())
+    .setId(order.getId());
+  }
+
   setItem(item: IItem): OrderBuilder {
     this.item = item;
     return this;

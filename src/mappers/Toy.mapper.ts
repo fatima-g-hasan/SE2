@@ -1,5 +1,5 @@
-import { ToyBuilder } from "../model/builders/toy.builder";
-import { Toy } from "../model/Toy.model";
+import { IdentifiableToyBuilder, ToyBuilder } from "../model/builders/toy.builder";
+import { IdentifiableToy, Toy } from "../model/Toy.model";
 import { IMapper } from "./IMapper";
 
 export class XMLToyMapper implements IMapper<Record<string, string>, Toy> {
@@ -25,4 +25,44 @@ export class XMLToyMapper implements IMapper<Record<string, string>, Toy> {
     };
   }
 
+}
+
+export interface SQLToy {
+  id: string;
+  type: string;
+  ageGroup: string;
+  brand: string;
+  material: string;
+  batteryRequired: boolean;
+  educational: boolean;
+}
+
+export class SQLToyMapper implements IMapper<SQLToy, Toy> {
+
+  map(row: SQLToy): IdentifiableToy {
+    return IdentifiableToyBuilder.newBuilder()
+            .setToy(ToyBuilder.newBuilder()
+              .setType(row.type)
+              .setAgeGroup(row.ageGroup)
+              .setBrand(row.brand)
+              .setMaterial(row.material)
+              .setBatteryRequired(row.batteryRequired)
+              .setEducational(row.educational)
+              .build())
+            .setId(row.id) 
+            .build();
+    
+  }
+
+  reverseMap(toy: IdentifiableToy): SQLToy {
+    return {
+      id: toy.getId(),
+      type: toy.getType(),
+      ageGroup: toy.getAgeGroup(),
+      brand: toy.getBrand(),
+      material: toy.getMaterial(),
+      batteryRequired: toy.getBatteryRequired(),
+      educational: toy.getEducational()
+    };
+  }
 }

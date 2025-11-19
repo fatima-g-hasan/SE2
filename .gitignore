@@ -4,3 +4,4 @@ build
 coverage/
 logs
 .DS_Store
+.env.test

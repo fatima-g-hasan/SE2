@@ -22,6 +22,24 @@ export class CakeBuilder {
     return new CakeBuilder();
   }
 
+  static fromExisting(cake: IdentifiableCake): CakeBuilder {
+  return CakeBuilder.newBuilder()
+    .setType(cake.getType())
+    .setFlavor(cake.getFlavor())
+    .setFilling(cake.getFilling())
+    .setSize(cake.getSize())
+    .setLayers(cake.getLayers())
+    .setFrostingType(cake.getFrostingType())
+    .setFrostingFlavor(cake.getFrostingFlavor())
+    .setDecorationType(cake.getDecorationType())
+    .setDecorationColor(cake.getDecorationColor())
+    .setCustomMessage(cake.getCustomMessage())
+    .setShape(cake.getShape())
+    .setAllergies(cake.getAllergies())
+    .setSpecialIngredients(cake.getSpecialIngredients())
+    .setPackagingType(cake.getPackagingType());
+  }
+
   setType(type: string): CakeBuilder {
     this.type = type;
     return this;

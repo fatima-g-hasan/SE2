@@ -3,6 +3,7 @@ import type { Config } from "@jest/types";
 const config: Config.InitialOptions = {
   preset: "ts-jest",
   testEnvironment: "node",
+  // setupFilesAfterEnv: ["<rootDir>/tests/setup.ts"],
   roots: ["<rootDir>/tests"],
   testMatch: ["**/*.test.ts"],
   verbose: true,
