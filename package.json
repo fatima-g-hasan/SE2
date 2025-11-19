@@ -11,7 +11,7 @@
     "prestart": "npm run build",
     "start": "node build/index.js",
     "dev": "ts-node-dev --respawn src/index.ts",
-    "test": "jest"
+    "test": "npx cross-env NODE_ENV=test jest"
   },
   "keywords": [],
   "author": "Fatima Hasan",
@@ -20,6 +20,7 @@
   "devDependencies": {
     "@eslint/js": "^9.37.0",
     "@types/jest": "^30.0.0",
+    "dotenv": "^17.2.3",
     "eslint": "^9.37.0",
     "globals": "^16.4.0",
     "jest": "^30.2.0",
@@ -30,10 +31,10 @@
     "typescript-eslint": "^8.45.0"
   },
   "dependencies": {
+    "@neondatabase/serverless": "^1.0.2",
     "csv": "^6.4.1",
     "csv-parse": "^6.1.0",
     "csv-stringify": "^6.6.0",
-    "dotenv": "^17.2.3",
     "fast-xml-parser": "^5.3.0",
     "sqlite": "^5.1.1",
     "sqlite3": "^5.1.7",

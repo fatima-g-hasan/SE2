@@ -33,7 +33,7 @@ describe("CSVCakeMapper", () => {
     expect(cake.getType()).toBe("Chocolate");
     expect(cake.getSize()).toBe(10);
     expect(cake.getLayers()).toBe(2);
-    expect(cake.getPackagingTypes()).toBe("Box");
+    expect(cake.getPackagingType()).toBe("Box");
   });
 
   it("should throw an error when a required field is missing", () => {
