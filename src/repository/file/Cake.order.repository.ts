@@ -18,7 +18,7 @@ export class CakeOrderRepository extends OrderRepository {
       return csv.map(this.mapper.map.bind(this.mapper));
 
     } catch (error: unknown) {
-        throw new DbException("Failed to load orders", error as Error);
+        throw new DbException("Failed to load cake orders", error as Error);
     }
     
   }
@@ -37,7 +37,7 @@ export class CakeOrderRepository extends OrderRepository {
       // parse.write
       await writeCSVFile(this.filePath, [header, ...rawItems]);
     } catch (error: unknown) {
-      throw new DbException("Failed to load orders", error as Error);
+      throw new DbException("Failed to load cake orders", error as Error);
     }
   }
 }
