@@ -1,0 +1,127 @@
+openapi: 3.0.0
+info:
+  title: Analytics API
+  description: >  
+    API providing business analytics on orders. 
+    These endpoints are read-only and do not require any parameters.
+  version: 1.0.0
+servers:
+  - url: http://localhost:8080/api
+paths:
+  /analytics/orders/total:
+    get:
+      summary: Get the total number of orders
+      responses:
+        '200':
+          description: Total number of orders retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  totalOrders:
+                    type: integer
+                    example: 1200
+        '500':
+          description: Internal server error
+
+  /analytics/orders/item-types:
+    get:
+      summary: Get number of orders per item type
+      responses:
+        '200':
+          description: Number of orders per item type retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ordersByItemType:
+                    type: object
+                    additionalProperties:
+                      type: integer
+                    example:
+                      cake: 120
+                      book: 45
+                      toy: 78
+        '500':
+          description: Internal server error
+
+  /analytics/revenue/total:
+    get:
+      summary: Get total revenue generated from all orders
+      responses:
+        '200':
+          description: Total revenue retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  totalRevenue:
+                    type: number
+                    format: float
+                    example: 45299.50
+        '500':
+          description: Internal server error
+
+  /analytics/revenue/item-types:
+    get:
+      summary: Get revenue breakdown by item type
+      responses:
+        '200':
+          description: Revenue per item type retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  revenueByItemType:
+                    type: object
+                    additionalProperties:
+                      type: number
+                      format: float
+                    example:
+                      cake: 32000.50
+                      book: 5500.00
+                      toy: 7800.25
+        '500':
+          description: Internal server error
+
+  /analytics/orders/average-value:
+    get:
+      summary: Get the average order value
+      responses:
+        '200':
+          description: Average order value retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  averageOrderValue:
+                    type: number
+                    format: float
+                    example: 50.0
+        '500':
+          description: Internal server error
+
+  /analytics/orders/top-item-type:
+    get:
+      summary: Get the top-selling item type
+      responses:
+        '200':
+          description: Top-selling item type retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  topItemType:
+                    type: string
+                    example: cake
+                  orders:
+                    type: integer
+                    example: 120
+        '500':
+          description: Internal server error
