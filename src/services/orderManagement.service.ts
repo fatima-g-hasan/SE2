@@ -88,9 +88,38 @@ export class OrderManagementService {
     return total;
   }
 
+  // get revenue by item type
+  public async getRevenueByItemType(): Promise<Record<string, number>> {
+    const orders = await this.getAllOrders();
+    const revenueByItemType: Record<string, number> = {};
+
+    for (const order of orders) {
+      const type = order.getItem().getCategory();
+      const revenue = order.getPrice() * order.getQuantity();
+      revenueByItemType[type] = (revenueByItemType[type] || 0) + revenue;
+    }
+
+    return revenueByItemType;
+  }
+
+
   // get total orders
   public async getTotalOrders(): Promise<number> {
     const orders = await this.getAllOrders();
     return orders.length;
   }
+
+  // order count by item type
+  public async getOrdersByItemType(): Promise<Record<string, number>> {
+    const orders = await this.getAllOrders();
+    const ordersByItemType: Record<string, number> = {};
+
+    for (const order of orders) {
+      const type = order.getItem().getCategory();
+      ordersByItemType[type] = (ordersByItemType[type] || 0) + 1;
+    }
+
+    return ordersByItemType;
+  }
+
 }
