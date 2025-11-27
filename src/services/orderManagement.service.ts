@@ -1,9 +1,9 @@
-import { ServiceException } from "util/exceptions/ServiceException";
-import { RepositoryFactory } from "repository/Repository.factory";
-import config from "config";
-import { IIdentifiableOrderItem } from "model/IOrder";
-import { ItemCategory } from "model/IItem";
-import { IRepository } from "repository/IRepository";
+import { ServiceException } from "../util/exceptions/ServiceException";
+import { RepositoryFactory } from "../repository/Repository.factory";
+import { IIdentifiableOrderItem } from "../model/IOrder";
+import { ItemCategory } from "../model/IItem";
+import { IRepository } from "../repository/IRepository";
+import { DBMode } from "../repository/Repository.factory";
 
 
 export class OrderManagementService {
@@ -68,7 +68,7 @@ export class OrderManagementService {
   }
 
   private async getRepo(category: ItemCategory): Promise<IRepository<IIdentifiableOrderItem>> {
-    return RepositoryFactory.create(config.dbMode, category);
+    return RepositoryFactory.create(DBMode.SQLITE, category);
   }
 
   private validateOrder(order: IIdentifiableOrderItem): void {

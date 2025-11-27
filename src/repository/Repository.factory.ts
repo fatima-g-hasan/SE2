@@ -1,14 +1,10 @@
 import { IIdentifiableOrderItem, IOrder } from "../model/IOrder";
 import { Initializable, IRepository } from "./IRepository";
 import { ItemCategory } from "../model/IItem";
-import { CakeOrderRepository } from "./file/Cake.order.repository";
-import config from "../config";
 import { OrderRepository } from "./sqlite/Order.repository";
 import { CakeRepository } from "./sqlite/Cake.order.repository";
 import { BookRepository } from "./sqlite/Book.order.repositoy";
 import { ToyRepository } from "./sqlite/Toy.order.repository";
-import { BookOrderRepository } from "./file/Book.order.repository";
-import { ToyOrderRepository } from "./file/Toy.order.repository";
 import { PostgresOrderRepository } from "./postgreSQL/PGOrder.repository";
 import { PostgresCakeRepository } from "./postgreSQL/PGCake.order.repository";
 import { PostgresBookRepository } from "./postgreSQL/PGBook.order.repository";
