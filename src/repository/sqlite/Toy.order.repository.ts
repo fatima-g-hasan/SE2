@@ -15,7 +15,7 @@ const CREATE_TABLE = `CREATE TABLE IF NOT EXISTS ${tableName} (
     ageGroup TEXT NOT NULL,
     brand TEXT NOT NULL,
     material TEXT NOT NULL,
-    batteryRequired BOOLEAN NOT NULL
+    batteryRequired BOOLEAN NOT NULL,
     educational BOOLEAN NOT NULL
     )`;
 
