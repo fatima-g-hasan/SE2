@@ -1,9 +1,10 @@
-import { ServiceException } from "../util/exceptions/ServiceException";
 import { RepositoryFactory } from "../repository/Repository.factory";
 import { IIdentifiableOrderItem } from "../model/IOrder";
 import { ItemCategory } from "../model/IItem";
 import { IRepository } from "../repository/IRepository";
-import { DBMode } from "../repository/Repository.factory";
+import { DBMode } from "../config/types";
+import { NotFoundException } from "../util/exceptions/http/NotFoundException";
+import { BadRequestException } from "../util/exceptions/http/BadRequestException";
 
 
 export class OrderManagementService {
@@ -14,7 +15,7 @@ export class OrderManagementService {
 
     // persist the new order
     const repo = await this.getRepo(order.getItem().getCategory());
-    repo.create(order);
+    await repo.create(order);
     return order;
   }
 
@@ -22,13 +23,15 @@ export class OrderManagementService {
   public async getOrder(id: string): Promise<IIdentifiableOrderItem> {
     const categories = Object.values(ItemCategory);
     for (const category of categories) {
-      const repo = await this.getRepo(category);
-      const order = await repo.get(id);
-      if(order) {
-        return order;
+      try {
+        const repo = await this.getRepo(category);
+        const order = await repo.get(id);
+          return order;
+      } catch (error) {
+        // ignore the error and continue to the next category
       }
     }
-    throw new ServiceException(`Order with id ${id} not found`);
+    throw new NotFoundException(`Order with id ${id} not found`);
   }
 
   // Update order
@@ -38,7 +41,7 @@ export class OrderManagementService {
 
     // persist the new order
     const repo = await this.getRepo(order.getItem().getCategory());
-    repo.update(order);
+    await repo.update(order);
   }
 
   // Delete order
@@ -48,11 +51,11 @@ export class OrderManagementService {
       const repo = await this.getRepo(category);
       const order = await repo.get(id);
       if (order) {
-        repo.delete(id);
+        await repo.delete(id);
         return;
       }
     }
-    throw new ServiceException(`Order with id ${id} not found`);
+    throw new NotFoundException(`Order with id ${id} not found`);
   }
 
   // Get all orders
@@ -73,7 +76,12 @@ export class OrderManagementService {
 
   private validateOrder(order: IIdentifiableOrderItem): void {
     if (!order.getItem() || order.getPrice() <= 0 || order.getQuantity() <= 0) {
-      throw new ServiceException("Invalid order: item, price, and quantity must be valid.")
+      const details = {
+        ItemNotDefined: !order.getItem(),
+        PriceNegative: order.getPrice() <= 0,
+        QuantityNegative: order.getQuantity() <= 0
+      }
+      throw new BadRequestException("Invalid order: item, price, and quantity must be valid.", details)
     }
   }
 

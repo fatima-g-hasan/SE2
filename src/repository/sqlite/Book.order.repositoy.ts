@@ -17,7 +17,7 @@ const CREATE_TABLE = `CREATE TABLE IF NOT EXISTS ${tableName} (
     language TEXT NOT NULL,
     publisher TEXT NOT NULL,
     specialEdition TEXT NOT NULL,
-    packaging TEXT NOT NULL,
+    packaging TEXT NOT NULL
     )`;
 
 const INSERT_BOOK = `INSERT INTO ${tableName} (
@@ -64,7 +64,7 @@ export class BookRepository implements IRepository<IdentifiableBook>, Initializa
       item.getLanguage(),
       item.getPublisher(),
       item.getSpecialEdition(),
-      item.getPackaging(),
+      item.getPackaging()
     ]);
     return item.getId();
     } catch (error: unknown) {

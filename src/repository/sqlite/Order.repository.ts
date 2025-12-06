@@ -23,7 +23,7 @@ const SELECT_ALL = `SELECT * FROM "order" WHERE item_category = ?`;
 
 const DELETE_ID = `DELETE FROM "order" WHERE id = ?`;
 
-const UPDATE_ID = `UPDATE "order" SET quantity = ?, price = ?, item_category = ?, item_id = ?, WHERE id = ?`;
+const UPDATE_ID = `UPDATE "order" SET quantity = ?, price = ?, item_category = ?, item_id = ? WHERE id = ?`;
 
 
 export class OrderRepository implements IRepository<IIdentifiableOrderItem>, Initializable {
@@ -145,7 +145,8 @@ export class OrderRepository implements IRepository<IIdentifiableOrderItem>, Ini
     try {
         conn = await ConnectionManager.getConnection();
         conn.exec("BEGIN TRANSACTION");
-        await this.itemRepository.delete(id);
+        const itemId = (await this.get(id)).getItem().getId();
+        await this.itemRepository.delete(itemId);
         await conn.run(DELETE_ID, id);
         conn.exec("COMMIT");
     } catch (error: unknown) {
