@@ -9,13 +9,10 @@ import { PostgresOrderRepository } from "./postgreSQL/PGOrder.repository";
 import { PostgresCakeRepository } from "./postgreSQL/PGCake.order.repository";
 import { PostgresBookRepository } from "./postgreSQL/PGBook.order.repository";
 import { PostgresToyRepository } from "./postgreSQL/PGToy.order.repository";
+import { DBMode } from "../config/types";
 
   
-export enum DBMode {
-  SQLITE,
-  FILE,
-  POSTGRES
-}
+
 
 export class RepositoryFactory {
 
