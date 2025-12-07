@@ -1,5 +1,5 @@
-import { BookBuilder } from "../src/model/builders/book.builder";
-import { Book } from "../src/model/Book.model";
+import { BookBuilder } from "../../src/model/builders/book.builder";
+import { Book } from "../../src/model/Book.model";
 
 describe("BookBuilder", () => {
   it("should build a Book object when all properties are correct", () => {

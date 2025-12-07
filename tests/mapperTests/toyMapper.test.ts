@@ -1,5 +1,5 @@
-import {XMLToyMapper} from "../src/mappers/Toy.mapper";
-import { Toy } from "../src/model/Toy.model";
+import {XMLToyMapper} from "../../src/mappers/Toy.mapper";
+import { Toy } from "../../src/model/Toy.model";
 
 describe("XMLToyMapper", () => {
     let mapper: XMLToyMapper;

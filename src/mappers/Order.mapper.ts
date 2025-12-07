@@ -158,17 +158,6 @@ export class XMLOrderMapper implements IMapper<Record<string, string>, IOrder> {
     } 
 }
 
-interface JsonItem {
-  id: string;
-}
-
-interface JsonOrder {
-  id: string;
-  category: string;
-  item: JsonItem;
-  quantity: number;
-  price: number;
-}
 
 export class JsonRequestOrderMapper implements IMapper<any, IdentifiableOrderItem> {
 

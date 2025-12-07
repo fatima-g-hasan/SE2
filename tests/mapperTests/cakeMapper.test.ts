@@ -1,5 +1,5 @@
-import {CSVCakeMapper} from "../src/mappers/Cake.mapper";
-import { Cake } from "../src/model/Cake.model";
+import {CSVCakeMapper} from "../../src/mappers/Cake.mapper";
+import { Cake } from "../../src/model/Cake.model";
 
 describe("CSVCakeMapper", () => {
 

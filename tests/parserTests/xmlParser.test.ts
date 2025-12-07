@@ -1,6 +1,6 @@
 import fs from "fs";
 import path from "path";
-import { readXMLFile, writeXMLFile } from "../src/util/xmlParser";
+import { readXMLFile, writeXMLFile } from "../../src/util/xmlParser";
 
 describe("XML Parser", () => {
   const xmlPath = path.join(__dirname, "toy-orders.xml");
