@@ -26,7 +26,9 @@ export class OrderManagementService {
       try {
         const repo = await this.getRepo(category);
         const order = await repo.get(id);
+        if (order) {
           return order;
+        }
       } catch (error) {
         // ignore the error and continue to the next category
       }

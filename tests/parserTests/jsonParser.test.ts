@@ -1,6 +1,6 @@
 import fs from "fs";
 import path from "path";
-import { readJSONFile, writeJSONFile } from "../src/util/jsonParser";
+import { readJSONFile, writeJSONFile } from "../../src/util/jsonParser";
 
 describe("JSON Parser", () => {
   const jsonPath = path.join(__dirname, "test.json");
