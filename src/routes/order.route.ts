@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { OrderController } from "../controllers/order.controller";
-import { OrderManagementService } from "../services/orderManagement.service";
+import { OrderManagementService } from "../services/OrderManagement.service";
 import { asyncHandler } from "../middleware/asyncHandler";
 
 const orderController = new OrderController(new OrderManagementService());
@@ -15,7 +15,7 @@ route.route('/')
 
 route.route('/:id')
   .get(asyncHandler(orderController.getOrder.bind(orderController)))
-  .put(asyncHandler(orderController.createOrder.bind(orderController)))
+  .put(asyncHandler(orderController.updateOrder.bind(orderController)))
   .delete(asyncHandler(orderController.deleteOrder.bind(orderController)));
 
 export default route;

@@ -7,6 +7,7 @@ import cors from "cors";
 import requestLogger from "./middleware/requestLogger";
 import routes from "./routes";
 import { HttpException } from "./util/exceptions/http/HttpException";
+import cookieParser from 'cookie-parser';
 
 const app = express()
 
@@ -22,6 +23,9 @@ app.use(cors());
 
 // add middlewares
 app.use(requestLogger);
+
+// cookie parser
+app.use(cookieParser());
 
 // config routes
 app.use('/', routes);

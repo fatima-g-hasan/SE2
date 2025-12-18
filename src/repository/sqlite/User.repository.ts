@@ -125,6 +125,22 @@ export class UserRepository implements InitializableRepository<User> {
       throw new Error(`Failed to delete user: ${(error as Error).message}`);
     }
   }
+
+  async getByEmail(email: string): Promise<User> {
+    if (!this.db) {
+      throw new Error ('Database not initialized');
+    }
+    const user = await this.db.get('SELECT * FROM users WHERE email =?', email);
+    if (!user) {
+      throw new Error('User not found');
+    }
+    return new User(
+      user.name,
+      user.email,
+      user.password,
+      user.id
+    );
+  }
 }
 
 export async function createUserRepository(): Promise<UserRepository> {

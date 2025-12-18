@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { AnalyticsController } from "../../src/controllers/analytics.controller";
-import { OrderManagementService } from "../../src/services/orderManagement.service";
+import { OrderManagementService } from "../../src/services/OrderManagement.service";
 
 describe ("AnalyticsController - getTotalRevenue", () => {
   let controller: AnalyticsController;

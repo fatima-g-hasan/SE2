@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { User } from "../model/User";
-import { UserService } from "../services/user.service";
+import { UserService } from "../services/UserManagement.service";
 import { generateUUID } from "../util/index";
 import { BadRequestException } from "../util/exceptions/http/BadRequestException";
 import { NotFoundException } from "../util/exceptions/http/NotFoundException";

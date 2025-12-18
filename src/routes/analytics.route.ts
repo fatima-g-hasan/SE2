@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { OrderManagementService } from "../services/orderManagement.service";
+import { OrderManagementService } from "../services/OrderManagement.service";
 import { asyncHandler } from "../middleware/asyncHandler";
 import { AnalyticsController } from "../controllers/analytics.controller";
 

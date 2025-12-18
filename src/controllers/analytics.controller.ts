@@ -1,4 +1,4 @@
-import { OrderManagementService } from "../services/orderManagement.service";
+import { OrderManagementService } from "../services/OrderManagement.service";
 import { Request, Response} from "express";
 
 export class AnalyticsController {
