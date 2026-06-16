@@ -2,6 +2,8 @@ import { OrderManagementService } from "../../src/services/orderManagement.servi
 import { ItemCategory } from "../../src/model/IItem";
 import { ServiceException } from "../../src/util/exceptions/ServiceException";
 import { IIdentifiableOrderItem } from "../../src/model/IOrder";
+import { BadRequestException } from "../../src/util/exceptions/http/BadRequestException";
+import { NotFoundException } from "../../src/util/exceptions/http/NotFoundException";
 
 
 // Create order
@@ -36,36 +38,36 @@ describe("OrderManagementService.createOrder", () => {
     expect(fakeRepo.create).toHaveBeenCalledWith(validOrder);
   });
 
-  it("should throw ServiceException for invalid order (no item)", async () => {
+  it("should throw BadRequestException for invalid order (no item)", async () => {
     const invalidOrder = {
       getItem: () => null,
       getPrice: () => 10,
       getQuantity: () => 2,
     };
 
-    await expect(service.createOrder(invalidOrder as any)).rejects.toThrow(ServiceException);
+    await expect(service.createOrder(invalidOrder as any)).rejects.toThrow(BadRequestException);
     expect(fakeRepo.create).not.toHaveBeenCalled();
   });
 
-  it("should throw ServiceException for invalid order (price <= 0)", async () => {
+  it("should throw BadRequestException for invalid order (price <= 0)", async () => {
     const invalidOrder = {
       getItem: () => ({ getCategory: () => ItemCategory.CAKE }),
       getPrice: () => 0,
       getQuantity: () => 2,
     };
 
-    await expect(service.createOrder(invalidOrder as any)).rejects.toThrow(ServiceException);
+    await expect(service.createOrder(invalidOrder as any)).rejects.toThrow(BadRequestException);
     expect(fakeRepo.create).not.toHaveBeenCalled();
   });
 
-  it("should throw ServiceException for invalid order (quantity <= 0)", async () => {
+  it("should throw BadRequestException for invalid order (quantity <= 0)", async () => {
     const invalidOrder = {
       getItem: () => ({ getCategory: () => ItemCategory.CAKE }),
       getPrice: () => 10,
       getQuantity: () => 0,
     };
 
-    await expect(service.createOrder(invalidOrder as any)).rejects.toThrow(ServiceException);
+    await expect(service.createOrder(invalidOrder as any)).rejects.toThrow(BadRequestException);
     expect(fakeRepo.create).not.toHaveBeenCalled();
   });
 });
@@ -121,14 +123,14 @@ describe("OrderManagementService.getOrder", () => {
     expect(mockRepos[ItemCategory.TOY].get).not.toHaveBeenCalled();
   });
 
-  it("should throw ServiceException if no repo contains the order", async () => {
+  it("should throw NotFoundException if no repo contains the order", async () => {
     mockRepos[ItemCategory.CAKE].get.mockResolvedValue(null);
     mockRepos[ItemCategory.BOOK].get.mockResolvedValue(null);
     mockRepos[ItemCategory.TOY].get.mockResolvedValue(null);
 
     await expect(service.getOrder("not-found"))
       .rejects
-      .toThrow(ServiceException);
+      .toThrow(NotFoundException);
 
     expect(mockRepos[ItemCategory.CAKE].get).toHaveBeenCalledWith("not-found");
     expect(mockRepos[ItemCategory.BOOK].get).toHaveBeenCalledWith("not-found");
@@ -241,14 +243,14 @@ describe("OrderManagementService.deleteOrder", () => {
     expect(repoToy.delete).not.toHaveBeenCalled();
   });
 
-  it("should throw ServiceException if order is not found in any repo", async () => {
+  it("should throw NotFoundException if order is not found in any repo", async () => {
   repoCake.get.mockResolvedValue(null);
   repoBook.get.mockResolvedValue(null);
   repoToy.get.mockResolvedValue(null);
 
   await expect(service.deleteOrder("order-1"))
     .rejects
-    .toThrow(ServiceException);
+    .toThrow(NotFoundException);
 
   expect(repoCake.delete).not.toHaveBeenCalled();
   expect(repoBook.delete).not.toHaveBeenCalled();

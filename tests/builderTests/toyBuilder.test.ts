@@ -1,5 +1,5 @@
-import { ToyBuilder } from "../src/model/builders/toy.builder";
-import { Toy } from "../src/model/Toy.model";
+import { ToyBuilder } from "../../src/model/builders/toy.builder";
+import { Toy } from "../../src/model/Toy.model";
 
 describe("ToyBuilder", () => {
   it("should build a Toy object when all properties are correct", () => {

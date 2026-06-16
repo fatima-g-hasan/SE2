@@ -66,3 +66,34 @@ export class SQLToyMapper implements IMapper<SQLToy, Toy> {
     };
   }
 }
+
+export class JsonToyRequestMapper implements IMapper<any, IdentifiableToy> {
+
+  map(data: any): IdentifiableToy {
+    const toy = ToyBuilder.newBuilder()
+      .setType(data.type)
+      .setAgeGroup(data.ageGroup)
+      .setBrand(data.brand)
+      .setMaterial(data.material)
+      .setBatteryRequired(data.batteryRequired)
+      .setEducational(data.educational)
+      .build();
+
+    return IdentifiableToyBuilder.newBuilder()
+      .setToy(toy)
+      .setId(data.id)
+      .build();
+  }
+
+  reverseMap(data: IdentifiableToy): any {
+    return {
+      id: data.getId(),
+      type: data.getType(),
+      ageGroup: data.getAgeGroup(),
+      brand: data.getBrand(),
+      material: data.getMaterial(),
+      batteryRequired: data.getBatteryRequired(),
+      educational: data.getEducational()
+    };
+  }
+}

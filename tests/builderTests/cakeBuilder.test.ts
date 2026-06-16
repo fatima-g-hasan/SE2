@@ -1,5 +1,5 @@
-import { CakeBuilder } from "../src/model/builders/cake.builder";
-import { Cake } from "../src/model/Cake.model";
+import { CakeBuilder } from "../../src/model/builders/cake.builder";
+import { Cake } from "../../src/model/Cake.model";
 
 describe("CakeBuilder", () => {
   it("should build a Cake object when all properties are correct", () => {

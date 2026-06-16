@@ -1,5 +1,5 @@
-import { JSONBookMapper } from "../src/mappers/Book.mapper";
-import { Book } from "../src/model/Book.model";
+import { JSONBookMapper } from "../../src/mappers/Book.mapper";
+import { Book } from "../../src/model/Book.model";
 
 describe("JSONBookMapper", () => {
   let mapper: JSONBookMapper;

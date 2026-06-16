@@ -1,7 +1,6 @@
 import { CSVCakeMapper, SQLiteCakeMapper } from "./Cake.mapper";
 import { CSVOrderMapper, JSONOrderMapper, SQLiteOrderMapper, XMLOrderMapper } from "./Order.mapper";
 import { IMapper } from "./IMapper";
-import { Cake, IdentifiableCake } from "../model/Cake.model";
 import { IOrder } from "../model/IOrder";
 import { JSONBookMapper, SQLBookMapper } from "./Book.mapper";
 import { SQLToyMapper, XMLToyMapper } from "./Toy.mapper";
