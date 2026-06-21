@@ -4,11 +4,13 @@
     "module": "commonjs",
     "strict": true,
     "types": ["node", "jest"],
-    "rootDir": "./src",
+    "baseUrl": "./src",
+    "rootDir": ".",
     "outDir": "build",
     "sourceMap": true,
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "ignoreDeprecations": "6.0"
   },
-  "include": ["src/**/*.ts"],
+  "include": ["src/**/*.ts", "tests/**/*.ts"],
   "exclude": ["node_modules"]
 }

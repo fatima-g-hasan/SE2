@@ -1,6 +1,6 @@
-import { OrderManagementService } from "../../src/services/orderManagement.service";
+import { OrderManagementService } from "../../src/services/OrderManagement.service";
 import { ItemCategory } from "../../src/model/IItem";
-import { ServiceException } from "../../src/util/exceptions/ServiceException";
+import { ServiceException } from "../../src/util/exceptions/http/ServiceException";
 import { IIdentifiableOrderItem } from "../../src/model/IOrder";
 import { BadRequestException } from "../../src/util/exceptions/http/BadRequestException";
 import { NotFoundException } from "../../src/util/exceptions/http/NotFoundException";
