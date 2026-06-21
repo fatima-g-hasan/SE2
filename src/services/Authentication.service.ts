@@ -1,5 +1,5 @@
 import config from '../config';
-import { TokenPayload, UserPayload } from '../config/types';
+import { UserPayload } from '../config/types';
 import jwt from 'jsonwebtoken';
 import { InvalidTokenException, TokenExpiredException } from '../util/exceptions/http/AuthenticationException';
 import { ServiceException } from '../util/exceptions/http/ServiceException';

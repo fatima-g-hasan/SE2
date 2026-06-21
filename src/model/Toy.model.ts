@@ -1,4 +1,4 @@
-import { id } from "repository/IRepository";
+import { id } from "../repository/IRepository";
 import { IIdentifiableItem, IItem, ItemCategory } from "./IItem";
 
 export class Toy implements IItem {

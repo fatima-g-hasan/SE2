@@ -1,4 +1,4 @@
-import { IIdentifiableOrderItem, IOrder } from "../model/IOrder";
+import { IIdentifiableOrderItem} from "../model/IOrder";
 import { Initializable, IRepository } from "./IRepository";
 import { ItemCategory } from "../model/IItem";
 import { OrderRepository } from "./sqlite/Order.repository";

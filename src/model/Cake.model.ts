@@ -1,5 +1,5 @@
 import { IIdentifiableItem, IItem, ItemCategory } from "./IItem";
-import {id} from "repository/IRepository";
+import {id} from "../repository/IRepository";
 
 
 

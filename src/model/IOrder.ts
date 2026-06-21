@@ -1,4 +1,4 @@
-import { ID } from "repository/IRepository";
+import { ID } from "../repository/IRepository";
 import { IIdentifiableItem, IItem } from "./IItem";
 
 export interface IOrder {

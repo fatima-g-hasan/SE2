@@ -2,7 +2,7 @@ import { IdentifiableOrderItemBuilder, OrderBuilder } from "../model/builders/or
 import { IIdentifiableOrderItem, IOrder } from "../model/IOrder";
 import { IMapper } from "./IMapper";
 import { IIdentifiableItem, IItem } from "../model/IItem";
-import { IdentifiableOrderItem } from "model/Order.model";
+import { IdentifiableOrderItem } from "../model/Order.model";
 
 
 export interface SQLiteOrder {

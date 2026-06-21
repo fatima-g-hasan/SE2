@@ -1,6 +1,6 @@
-import { CakeBuilder } from "model/builders/cake.builder";
-import { BookBuilder } from "model/builders/book.builder";
-import { ToyBuilder } from "model/builders/toy.builder";
+import { CakeBuilder } from "./model/builders/cake.builder";
+import { BookBuilder } from "./model/builders/book.builder";
+import { ToyBuilder } from "./model/builders/toy.builder";
 
 // CAKE
 export async function createCake() {
