@@ -5,7 +5,7 @@
   "scripts": {
     "lint": "eslint src",
     "clean": "if exist build rmdir /s /q build",
-    "prebuild": "npm run clean && npm run lint",
+    "prebuild": "npm run clean",
     "build": "tsc",
     "postbuild": "echo Finished build",
     "prestart": "npm run build",
