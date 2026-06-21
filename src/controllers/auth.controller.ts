@@ -2,7 +2,8 @@ import { BadRequestException } from "../util/exceptions/http/BadRequestException
 import { AuthenticationService } from "../services/Authentication.service";
 import {Request, Response} from "express";
 import { UserService } from "../services/UserManagement.service";
-import { AuthRequest } from "../config/types";
+import { AuthRequest, UserPayload } from "../config/types";
+import { toRole } from "../config/roles";
 
 export class AuthenticationController {
   constructor (
@@ -19,8 +20,9 @@ export class AuthenticationController {
       }
       // validate user
       try {
-        const userId = await this.userService.validateUser(email, password);
-        this.authService.persistAuthentication(res, userId)
+        const user = await this.userService.validateUser(email, password);
+        const userPayload: UserPayload = {userId: user.id, role: toRole(user.role)};
+        this.authService.persistAuthentication(res, userPayload);
         
         res.status(200).json({
           message: 'Login successful',
@@ -34,7 +36,6 @@ export class AuthenticationController {
     }
 
     logout(req: Request, res: Response) {
-      const authRequest = req as AuthRequest;
       this.authService.clearTokens(res);
       res.status(200).json({
         message: 'Logout successful',

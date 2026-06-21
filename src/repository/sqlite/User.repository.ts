@@ -2,6 +2,8 @@ import { id, InitializableRepository } from "../IRepository";
 import { Database } from "sqlite";
 import { ConnectionManager } from "./ConnectionManager";
 import { User } from "../../model/User";
+import { toRole } from "../../config/roles";
+import { table } from "console";
 
 export class UserRepository implements InitializableRepository<User> {
   private db: Database | null = null;
@@ -17,6 +19,27 @@ export class UserRepository implements InitializableRepository<User> {
         password TEXT NOT NULL
         )
       `);
+
+      // Check if the 'role' column exists
+      const tableInfo = await this.db.all(`PRAGMA table_info(users)`);
+      const roleColumnExists = tableInfo.some(column => column.name === 'role');
+      
+      // Add the role column if it doesn't exist
+      if (!roleColumnExists) {
+        try {
+          await this.db.exec(`
+            ALTER TABLE users ADD COLUMN role TEXT DEFAULT 'user';
+          `)
+          console.log("Added 'role' column to users table.");
+        } catch (error) {
+          // Handle potential errors during ALTER TABLE, though the primary check prevents the 'duplicate column' error
+          console.error("Failed to add 'role' column:", error);
+          throw error; // Re-throw other errors
+        }
+      }
+      await this.db.exec(`
+        ALTER TABLE users ADD COLUMN IF NOT EXISTS role TEXT DEFAULT 'user';
+        `)
   }
 
    async getAll(): Promise<User[]> {
@@ -30,7 +53,8 @@ export class UserRepository implements InitializableRepository<User> {
         user.name,
         user.email,
         user.password,
-        user.id
+        user.id,
+        toRole(user.role)
       ));
     } catch (error) {
       throw new Error(`Failed to get all users: ${(error as Error).message}`)
@@ -51,7 +75,8 @@ export class UserRepository implements InitializableRepository<User> {
         user.name,
         user.email,
         user.password,
-        user.id
+        user.id,
+        toRole(user.role)
       );
     } catch (error) {
       if ((error as Error).message === 'User not found') {
@@ -69,11 +94,12 @@ export class UserRepository implements InitializableRepository<User> {
       const userId = user.id;
 
       await this.db.run(
-        'INSERT INTO users (id, name, email, password) VALUES (?, ?, ?, ?)', 
+        'INSERT INTO users (id, name, email, password, role) VALUES (?, ?, ?, ?, ?)', 
         userId,
         user.name,
         user.email,
-        user.password
+        user.password,
+        user.role
       );
       return userId;
     } catch(error) {
@@ -90,10 +116,11 @@ export class UserRepository implements InitializableRepository<User> {
       const userId = user.getId();
 
       const result = await this.db.run(
-        'UPDATE users SET name = ?, email = ?, password = ? WHERE id = ?',
+        'UPDATE users SET name = ?, email = ?, password = ?, role = ? WHERE id = ?',
         user.name,
         user.email,
         user.password,
+        user.role,
         userId
       );
 

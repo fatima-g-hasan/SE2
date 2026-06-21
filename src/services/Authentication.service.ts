@@ -1,5 +1,5 @@
 import config from '../config';
-import { TokenPayload } from '../config/types';
+import { TokenPayload, UserPayload } from '../config/types';
 import jwt from 'jsonwebtoken';
 import { InvalidTokenException, TokenExpiredException } from '../util/exceptions/http/AuthenticationException';
 import { ServiceException } from '../util/exceptions/http/ServiceException';
@@ -15,25 +15,25 @@ export class AuthenticationService {
     private refreshTokenExpiration = config.auth.refreshTokenExpiration,
   ) {}
 
-  generateToken(userId: string): string {
+  generateToken(payload: UserPayload): string {
     return jwt.sign(
-      {userId},
-      this.secretKey, 
-      {expiresIn: this.tokenExpiration}
+        payload,
+        this.secretKey,
+        {expiresIn: this.tokenExpiration}
       );
   }
 
-  generateRefreshToken(userId: string): string {
+  generateRefreshToken(payload: UserPayload): string {
     return jwt.sign(
-      {userId},
+      payload,
       this.secretKey,
-      {expiresIn: config.auth.refreshTokenExpiration}
+      {expiresIn: this.refreshTokenExpiration}
     )
   }
 
-  verify(token: string): TokenPayload {
+  verify(token: string): UserPayload {
     try {
-      return jwt.verify(token, this.secretKey) as TokenPayload;
+      return jwt.verify(token, this.secretKey) as UserPayload;
     } catch (error) {
       logger.error('Token verification failed', error);
       if (error instanceof jwt.TokenExpiredError) {
@@ -51,7 +51,7 @@ export class AuthenticationService {
     if (!payload) {
       throw new InvalidTokenException();
     }
-    return this.generateToken(payload.userId);
+    return this.generateToken(payload);
   }
 
   setTokenIntoCookie(res: Response, token: string) {
@@ -76,9 +76,9 @@ export class AuthenticationService {
   }
 
   
-    persistAuthentication(res:Response, userId: string) {
-      const token = this.generateToken(userId);
-      const refreshToken = this.generateRefreshToken(userId);
+    persistAuthentication(res:Response, payload: UserPayload) {
+      const token = this.generateToken(payload);
+      const refreshToken = this.generateRefreshToken(payload);
       this.setTokenIntoCookie(res, token);
       this.setRefreshTokenIntoCookie(res, refreshToken);
     }

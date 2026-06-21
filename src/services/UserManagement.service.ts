@@ -26,7 +26,7 @@ export class UserService {
     await (await this.getRepo()).delete(userId);
   }
 
-  async validateUser(email: string, password: string): Promise<id> {
+  async validateUser(email: string, password: string): Promise<User> {
     const user: User = await (await this.getRepo()).getByEmail(email);
     if (!user) {
       throw new NotFoundException('User not found via email');
@@ -34,7 +34,7 @@ export class UserService {
     if (user.password !== password) {
       throw new NotFoundException('Invalid password');
     }
-    return user.getId();
+    return user;
   }
 
   private async getRepo() {

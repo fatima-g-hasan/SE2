@@ -4,7 +4,7 @@
     "module": "commonjs",
     "strict": true,
     "types": ["node", "jest"],
-    "baseUrl": "./src",
+    "rootDir": "./src",
     "outDir": "build",
     "sourceMap": true,
     "esModuleInterop": true

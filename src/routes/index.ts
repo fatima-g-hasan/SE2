@@ -6,8 +6,8 @@ import { authenticate } from "../middleware/auth";
 
 const routes = Router();
 
-routes.use('/orders', authenticate, OrderRoutes)
-routes.use('/users', authenticate, UserRoutes)
+routes.use('/orders', authenticate, OrderRoutes);
+routes.use('/users', UserRoutes);
 routes.use('/auth', AuthRoutes);
 
 export default routes;

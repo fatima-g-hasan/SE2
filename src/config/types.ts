@@ -1,5 +1,6 @@
 import { Request } from "express";
 import { JwtPayload } from "jsonwebtoken";
+import { ROLE } from "./roles";
 
 export enum DBMode {
   SQLITE,
@@ -7,10 +8,15 @@ export enum DBMode {
   POSTGRES
 }
 
-export interface TokenPayload extends JwtPayload  {
+export interface UserPayload {
   userId: string;
+  role: ROLE
+}
+
+export interface TokenPayload extends JwtPayload {
+  user: UserPayload;
 }
 
 export interface AuthRequest extends Request {
-  userId: string;
+  user: UserPayload;
 }
