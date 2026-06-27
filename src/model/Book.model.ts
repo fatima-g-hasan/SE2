@@ -99,3 +99,19 @@ export class IdentifiableBook extends Book implements IIdentifiableItem {
     return this.id;
   }
 }
+
+export type JSONBookRow = {
+  "Order ID": string;
+  "Book Title": string;
+  Author: string;
+  Genre: string;
+  Format: string;
+  Language: string;
+  Publisher: string;
+  "Special Edition": string;
+  Packaging: string;
+  Price: string;
+  Quantity: string;
+};
+
+export type JSONBookFile = JSONBookRow[];
