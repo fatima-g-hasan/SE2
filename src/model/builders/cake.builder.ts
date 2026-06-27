@@ -2,42 +2,59 @@ import logger from "../../util/logger";
 import { Cake, IdentifiableCake } from "../Cake.model";
 
 
-export class CakeBuilder {
-  private type!: string;
-  private flavor!: string;
-  private filling!: string;
-  private size!: number;
-  private layers!: number;
-  private frostingType!: string;
-  private frostingFlavor!: string;
-  private decorationType!: string;
-  private decorationColor!: string;
-  private customMessage!: string;
-  private shape!: string;
-  private allergies!: string;
-  private specialIngredients!: string;
-  private packagingType!: string;
+type CakeBuilderState = {
+  type: string;
+  flavor: string;
+  filling: string;
+  size: number;
+  layers: number;
+  frostingType: string;
+  frostingFlavor: string;
+  decorationType: string;
+  decorationColor: string;
+  customMessage: string;
+  shape: string;
+  allergies: string;
+  specialIngredients: string;
+  packagingType: string;
+};
+
+export class CakeBuilder implements CakeBuilderState {
+  type!: string;
+  flavor!: string;
+  filling!: string;
+  size!: number;
+  layers!: number;
+  frostingType!: string;
+  frostingFlavor!: string;
+  decorationType!: string;
+  decorationColor!: string;
+  customMessage!: string;
+  shape!: string;
+  allergies!: string;
+  specialIngredients!: string;
+  packagingType!: string;
 
   public static newBuilder(): CakeBuilder {
     return new CakeBuilder();
   }
 
   static fromExisting(cake: IdentifiableCake): CakeBuilder {
-  return CakeBuilder.newBuilder()
-    .setType(cake.getType())
-    .setFlavor(cake.getFlavor())
-    .setFilling(cake.getFilling())
-    .setSize(cake.getSize())
-    .setLayers(cake.getLayers())
-    .setFrostingType(cake.getFrostingType())
-    .setFrostingFlavor(cake.getFrostingFlavor())
-    .setDecorationType(cake.getDecorationType())
-    .setDecorationColor(cake.getDecorationColor())
-    .setCustomMessage(cake.getCustomMessage())
-    .setShape(cake.getShape())
-    .setAllergies(cake.getAllergies())
-    .setSpecialIngredients(cake.getSpecialIngredients())
-    .setPackagingType(cake.getPackagingType());
+    return CakeBuilder.newBuilder()
+      .setType(cake.getType())
+      .setFlavor(cake.getFlavor())
+      .setFilling(cake.getFilling())
+      .setSize(cake.getSize())
+      .setLayers(cake.getLayers())
+      .setFrostingType(cake.getFrostingType())
+      .setFrostingFlavor(cake.getFrostingFlavor())
+      .setDecorationType(cake.getDecorationType())
+      .setDecorationColor(cake.getDecorationColor())
+      .setCustomMessage(cake.getCustomMessage())
+      .setShape(cake.getShape())
+      .setAllergies(cake.getAllergies())
+      .setSpecialIngredients(cake.getSpecialIngredients())
+      .setPackagingType(cake.getPackagingType());
   }
 
   setType(type: string): CakeBuilder {
@@ -111,52 +128,57 @@ export class CakeBuilder {
   }
 
   build(): Cake {
-    const requiredProperties = {
-        type: "string",
-        flavor: "string",
-        filling: "string",
-        size: "number",
-        layers: "number",
-        frostingType: "string",
-        frostingFlavor: "string",
-        decorationType: "string",
-        decorationColor: "string",
-        customMessage: "string",
-        shape: "string",
-        allergies: "string",
-        specialIngredients: "string",
-        packagingType: "string",
-  };
-    for (const [prop, type] of Object.entries(requiredProperties)) {
-      const value = (this as any)[prop];
+    const requiredProperties: Record<keyof CakeBuilderState, "string" | "number"> = {
+      type: "string",
+      flavor: "string",
+      filling: "string",
+      size: "number",
+      layers: "number",
+      frostingType: "string",
+      frostingFlavor: "string",
+      decorationType: "string",
+      decorationColor: "string",
+      customMessage: "string",
+      shape: "string",
+      allergies: "string",
+      specialIngredients: "string",
+      packagingType: "string",
+    };
+
+    for (const prop in requiredProperties) {
+      const key = prop as keyof CakeBuilderState;
+      const expectedType = requiredProperties[key];
+      const value = this[key];
+
       if (value === undefined || value === null) {
-        throw new Error(`${prop} is missing`);
-      }
-      if (typeof value !== type) {
-        throw new Error(`${prop} must be a ${type}`);
+        throw new Error(`${key} is missing`);
       }
 
-      if (type === "number" && isNaN(value)) {
-        throw new Error(`${prop} must be a valid number`);
+      if (typeof value !== expectedType) {
+        throw new Error(`${key} must be a ${expectedType}`);
+      }
+
+      if (expectedType === "number" && isNaN(value as number)) {
+        throw new Error(`${key} must be a valid number`);
       }
     }
 
     return new Cake(
-        this.type,
-        this.flavor,
-        this.filling,
-        this.size,
-        this.layers,
-        this.frostingType,
-        this.frostingFlavor,
-        this.decorationType,
-        this.decorationColor,
-        this.customMessage,
-        this.shape,
-        this.allergies,
-        this.specialIngredients,
-        this.packagingType
-    )
+      this.type,
+      this.flavor,
+      this.filling,
+      this.size,
+      this.layers,
+      this.frostingType,
+      this.frostingFlavor,
+      this.decorationType,
+      this.decorationColor,
+      this.customMessage,
+      this.shape,
+      this.allergies,
+      this.specialIngredients,
+      this.packagingType
+    );
   }
 }
 
@@ -180,9 +202,10 @@ export class IdentifiableCakeBuilder {
 
   build(): IdentifiableCake {
     if (!this.id || !this.cake) {
-      logger.error("Missing required properties, could not build an identiable cake");
+      logger.error("Missing required properties, could not build an identifiable cake");
       throw new Error("Missing required properties");
     }
+
     return new IdentifiableCake(
       this.id,
       this.cake.getType(),
@@ -198,7 +221,7 @@ export class IdentifiableCakeBuilder {
       this.cake.getShape(),
       this.cake.getAllergies(),
       this.cake.getSpecialIngredients(),
-      this.cake.getPackagingType(),
+      this.cake.getPackagingType()
     );
   }
 }

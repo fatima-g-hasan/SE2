@@ -3,7 +3,6 @@ import { Database } from "sqlite";
 import { ConnectionManager } from "./ConnectionManager";
 import { User } from "../../model/User";
 import { toRole } from "../../config/roles";
-import { table } from "console";
 
 export class UserRepository implements InitializableRepository<User> {
   private db: Database | null = null;

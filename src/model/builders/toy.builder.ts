@@ -2,28 +2,36 @@ import logger from "../../util/logger";
 import { IdentifiableToy, Toy } from "../Toy.model";
 
 
-export class ToyBuilder {
-  private type!: string;
-  private ageGroup!: string;
-  private brand!: string;
-  private material!: string;
-  private batteryRequired!: boolean;
-  private educational!: boolean;
+type ToyBuilderState = {
+  type: string;
+  ageGroup: string;
+  brand: string;
+  material: string;
+  batteryRequired: boolean;
+  educational: boolean;
+};
+
+export class ToyBuilder implements ToyBuilderState {
+  type!: string;
+  ageGroup!: string;
+  brand!: string;
+  material!: string;
+  batteryRequired!: boolean;
+  educational!: boolean;
 
   public static newBuilder(): ToyBuilder {
     return new ToyBuilder();
   }
 
   static fromExisting(toy: IdentifiableToy): ToyBuilder {
-  return ToyBuilder.newBuilder()
-    .setType(toy.getType())
-    .setAgeGroup(toy.getAgeGroup())
-    .setBrand(toy.getBrand())
-    .setMaterial(toy.getMaterial())
-    .setBatteryRequired(toy.getBatteryRequired())
-    .setEducational(toy.getEducational());
+    return ToyBuilder.newBuilder()
+      .setType(toy.getType())
+      .setAgeGroup(toy.getAgeGroup())
+      .setBrand(toy.getBrand())
+      .setMaterial(toy.getMaterial())
+      .setBatteryRequired(toy.getBatteryRequired())
+      .setEducational(toy.getEducational());
   }
-
 
   setType(type: string): ToyBuilder {
     this.type = type;
@@ -56,25 +64,32 @@ export class ToyBuilder {
   }
 
   build(): Toy {
-    const requiredProperties = {
+    const requiredProperties: Record<
+      keyof ToyBuilderState,
+      "string" | "boolean"
+    > = {
       type: "string",
       ageGroup: "string",
       brand: "string",
       material: "string",
       batteryRequired: "boolean",
-      educational: "boolean"
+      educational: "boolean",
     };
 
-    for (const [prop, type] of Object.entries(requiredProperties)) {
-      const value = (this as any)[prop];
+    for (const prop in requiredProperties) {
+      const key = prop as keyof ToyBuilderState;
+      const expectedType = requiredProperties[key];
+      const value = this[key];
+
       if (value === undefined || value === null) {
-        throw new Error(`${prop} is missing`);
+        throw new Error(`${key} is missing`);
       }
-      if (typeof value !== type) {
-        throw new Error(`${prop} must be a ${type}`);
+
+      if (typeof value !== expectedType) {
+        throw new Error(`${key} must be a ${expectedType}`);
       }
     }
-    
+
     return new Toy(
       this.type,
       this.ageGroup,
@@ -106,18 +121,20 @@ export class IdentifiableToyBuilder {
 
   build(): IdentifiableToy {
     if (!this.id || !this.toy) {
-      logger.error("Missing required properties, could not build an identiable toy");
+      logger.error(
+        "Missing required properties, could not build an identifiable toy"
+      );
       throw new Error("Missing required properties");
     }
+
     return new IdentifiableToy(
-        this.id,
-        this.toy.getType(),
-        this.toy.getAgeGroup(),
-        this.toy.getBrand(),
-        this.toy.getMaterial(),
-        this.toy.getBatteryRequired(),
-        this.toy.getEducational()
+      this.id,
+      this.toy.getType(),
+      this.toy.getAgeGroup(),
+      this.toy.getBrand(),
+      this.toy.getMaterial(),
+      this.toy.getBatteryRequired(),
+      this.toy.getEducational()
     );
   }
 }
-

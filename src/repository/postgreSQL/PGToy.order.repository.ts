@@ -1,5 +1,9 @@
 import { id, Initializable, IRepository } from "../IRepository";
-import { DbException, InitializationException, ItemNotFoundException } from "../../util/exceptions/repositoryExceptions";
+import {
+  DbException,
+  InitializationException,
+  ItemNotFoundException,
+} from "../../util/exceptions/repositoryExceptions";
 import logger from "../../util/logger";
 import { PGConnectionManager } from "./PGConnectionManager";
 import { ItemCategory } from "../../model/IItem";
@@ -33,22 +37,35 @@ const INSERT_TOY = `
 const UPDATE = `
   UPDATE ${tableName}
   SET 
-    "type" = $1, "ageGroup" = $2, "brand" = $3, "material" = $4,
-    "batteryRequired" = $5, "educational" = $6
+    "type" = $1,
+    "ageGroup" = $2,
+    "brand" = $3,
+    "material" = $4,
+    "batteryRequired" = $5,
+    "educational" = $6
   WHERE id = $7;
 `;
 
-export class PostgresToyRepository implements IRepository<IdentifiableToy>, Initializable {
+type ToyRow = SQLToy;
+
+export class PostgresToyRepository
+  implements IRepository<IdentifiableToy>, Initializable
+{
   private client = PGConnectionManager.getClient();
+  private mapper = new SQLToyMapper();
 
   async init(): Promise<void> {
     try {
       await this.client.query(`DROP TABLE IF EXISTS ${tableName};`);
       await this.client.query(CREATE_TABLE);
-      logger.info("Toy table initialized (PostgreSQL)");
+
+      logger.info("Toy table initialized (Neon PostgreSQL)");
     } catch (error: unknown) {
       logger.error("Failed to initialize Toy table", error as Error);
-      throw new InitializationException("Failed to initialize Toy table", error as Error);
+      throw new InitializationException(
+        "Failed to initialize Toy table",
+        error as Error
+      );
     }
   }
 
@@ -61,78 +78,93 @@ export class PostgresToyRepository implements IRepository<IdentifiableToy>, Init
         item.getBrand(),
         item.getMaterial(),
         item.getBatteryRequired(),
-        item.getEducational()
+        item.getEducational(),
       ]);
+
       return item.getId();
     } catch (error: unknown) {
       throw new DbException("Failed to create toy", error as Error);
     }
   }
 
-
   async get(id: id): Promise<IdentifiableToy> {
     try {
-      const result = (await this.client.query(
+      const result = await this.client.query(
         `SELECT * FROM ${tableName} WHERE id = $1`,
         [id]
-      )) as Record<string, any>[];
+      );
 
-      if (!result || result.length === 0) {
-        throw new ItemNotFoundException("Toy of id " + id + " not found");
+      const rows = result as unknown as ToyRow[];
+
+      if (!rows || rows.length === 0) {
+        throw new ItemNotFoundException(`Toy of id ${id} not found`);
       }
 
-      const toy = result[0] as SQLToy;
-      return new SQLToyMapper().map(toy);
-    } catch (error) {
-      throw new DbException("Failed to get book of id " + id, error as Error);
+      return this.mapper.map(rows[0]);
+    } catch (error: unknown) {
+      throw new DbException(`Failed to get toy of id ${id}`, error as Error);
     }
   }
 
-
   async getAll(): Promise<IdentifiableToy[]> {
     try {
-      const result = (await this.client.query(
+      const result = await this.client.query(
         `SELECT * FROM ${tableName}`
-      )) as Record<string, any>[];
+      );
 
-      if (!result || result.length === 0) return [];
+      const rows = result as unknown as ToyRow[];
 
-      const mapper = new SQLToyMapper();
-      return result.map((toy) => mapper.map(toy as SQLToy));
-    } catch (error) {
+      if (!rows || rows.length === 0) return [];
+
+      return rows.map((row) => this.mapper.map(row));
+    } catch (error: unknown) {
       logger.error("Failed to get all toys", error as Error);
       throw new DbException("Failed to get all toys", error as Error);
     }
   }
 
-
   async update(item: IdentifiableToy): Promise<void> {
     try {
       await this.client.query(UPDATE, [
-        item.getType(),             
-        item.getAgeGroup(),         
-        item.getBrand(),            
-        item.getMaterial(),         
-        item.getBatteryRequired(),  
-        item.getEducational(),      
-        item.getId()           
+        item.getType(),
+        item.getAgeGroup(),
+        item.getBrand(),
+        item.getMaterial(),
+        item.getBatteryRequired(),
+        item.getEducational(),
+        item.getId(),
       ]);
-    } catch (error) {
-      logger.error("Failed to update toy of id %s %o", item.getId(), error as Error);
-      throw new DbException("Failed to update toy of id " + item.getId(), error as Error);
+    } catch (error: unknown) {
+      logger.error(
+        "Failed to update toy of id %s %o",
+        item.getId(),
+        error as Error
+      );
+
+      throw new DbException(
+        `Failed to update toy of id ${item.getId()}`,
+        error as Error
+      );
     }
   }
 
-  
   async delete(id: id): Promise<void> {
     try {
       await this.client.query(
         `DELETE FROM ${tableName} WHERE id = $1`,
         [id]
       );
-    } catch (error) {
-      logger.error("Failed to delete toy of id %s %o", id, error as Error);
-      throw new DbException("Failed to delete toy of id " + id, error as Error);
+    } catch (error: unknown) {
+      logger.error(
+        "Failed to delete toy of id %s %o",
+        id,
+        error as Error
+      );
+
+      throw new DbException(
+        `Failed to delete toy of id ${id}`,
+        error as Error
+      );
     }
   }
 }

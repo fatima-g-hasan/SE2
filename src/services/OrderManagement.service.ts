@@ -5,6 +5,7 @@ import { IRepository } from "../repository/IRepository";
 import { DBMode } from "../config/types";
 import { NotFoundException } from "../util/exceptions/http/NotFoundException";
 import { BadRequestException } from "../util/exceptions/http/BadRequestException";
+import logger from "../util/logger";
 
 
 export class OrderManagementService {
@@ -30,7 +31,7 @@ export class OrderManagementService {
           return order;
         }
       } catch (error) {
-        // ignore the error and continue to the next category
+        logger.warn(error);
       }
     }
     throw new NotFoundException(`Order with id ${id} not found`);

@@ -10,6 +10,10 @@ import { SQLToyMapper, XMLToyMapper } from "./Toy.mapper";
 import { IItem } from "../model/IItem";
 import { IMapper } from "./IMapper";
 
+/* =========================
+   MODE
+========================= */
+
 export enum MapperMode {
   CSV,
   SQLITE,
@@ -17,7 +21,27 @@ export enum MapperMode {
   XML
 }
 
+/* =========================
+   ORDER ITEM MAPPER TYPES
+========================= */
+
+type OrderItemMapperMap = {
+  [MapperMode.CSV]: IMapper<string[], IItem>;
+  [MapperMode.JSON]: IMapper<Record<string, string>, IItem>;
+  [MapperMode.XML]: IMapper<Record<string, string>, IItem>;
+  [MapperMode.SQLITE]: never;
+};
+
+/* =========================
+   FACTORY
+========================= */
+
 export class MapperFactory {
+
+  /* =========================
+     CAKE
+  ========================= */
+
   public static createCakeMapper(
     mode: MapperMode.CSV
   ): CSVCakeMapper;
@@ -39,7 +63,11 @@ export class MapperFactory {
     }
   }
 
-    public static createBookMapper(
+  /* =========================
+     BOOK
+  ========================= */
+
+  public static createBookMapper(
     mode: MapperMode.JSON
   ): JSONBookMapper;
 
@@ -60,8 +88,11 @@ export class MapperFactory {
     }
   }
 
+  /* =========================
+     TOY
+  ========================= */
 
-    public static createToyMapper(
+  public static createToyMapper(
     mode: MapperMode.XML
   ): XMLToyMapper;
 
@@ -82,20 +113,23 @@ export class MapperFactory {
     }
   }
 
+  /* =========================
+     ORDER
+========================= */
 
-    public static createOrderMapper(
+  public static createOrderMapper(
     mode: MapperMode.CSV,
-    itemMapper: IMapper<string[], IItem>
+    itemMapper: OrderItemMapperMap[MapperMode.CSV]
   ): CSVOrderMapper;
 
   public static createOrderMapper(
     mode: MapperMode.JSON,
-    itemMapper: IMapper<Record<string, string>, IItem>
+    itemMapper: OrderItemMapperMap[MapperMode.JSON]
   ): JSONOrderMapper;
 
   public static createOrderMapper(
     mode: MapperMode.XML,
-    itemMapper: IMapper<Record<string, string>, IItem>
+    itemMapper: OrderItemMapperMap[MapperMode.XML]
   ): XMLOrderMapper;
 
   public static createOrderMapper(
@@ -104,17 +138,23 @@ export class MapperFactory {
 
   public static createOrderMapper(
     mode: MapperMode,
-    itemMapper?: IMapper<any, IItem>
+    itemMapper?: OrderItemMapperMap[MapperMode]
   ) {
     switch (mode) {
       case MapperMode.CSV:
-        return new CSVOrderMapper(itemMapper!);
+        return new CSVOrderMapper(
+          itemMapper as IMapper<string[], IItem>
+        );
 
       case MapperMode.JSON:
-        return new JSONOrderMapper(itemMapper!);
+        return new JSONOrderMapper(
+          itemMapper as IMapper<Record<string, string>, IItem>
+        );
 
       case MapperMode.XML:
-        return new XMLOrderMapper(itemMapper!);
+        return new XMLOrderMapper(
+          itemMapper as IMapper<Record<string, string>, IItem>
+        );
 
       case MapperMode.SQLITE:
         return new SQLiteOrderMapper();

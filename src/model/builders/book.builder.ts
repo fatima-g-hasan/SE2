@@ -2,32 +2,42 @@ import logger from "../../util/logger";
 import { Book, IdentifiableBook } from "../Book.model";
 
 
-export class BookBuilder {
-  private bookTitle!: string;
-  private author!: string;
-  private genre!: string;
-  private format!: string;
-  private language!: string;
-  private publisher!: string;
-  private specialEdition!: string;
-  private packaging!: string;
+type BookBuilderState = {
+  bookTitle: string;
+  author: string;
+  genre: string;
+  format: string;
+  language: string;
+  publisher: string;
+  specialEdition: string;
+  packaging: string;
+};
+
+export class BookBuilder implements BookBuilderState {
+  bookTitle!: string;
+  author!: string;
+  genre!: string;
+  format!: string;
+  language!: string;
+  publisher!: string;
+  specialEdition!: string;
+  packaging!: string;
 
   public static newBuilder(): BookBuilder {
     return new BookBuilder();
   }
 
   static fromExisting(book: IdentifiableBook): BookBuilder {
-  return BookBuilder.newBuilder()
-    .setBookTitle(book.getBookTitle())
-    .setAuthor(book.getAuthor())
-    .setGenre(book.getGenre())
-    .setFormat(book.getFormat())
-    .setLanguage(book.getLanguage())
-    .setPublisher(book.getPublisher())
-    .setSpecialEdition(book.getSpecialEdition())
-    .setPackaging(book.getPackaging());
+    return BookBuilder.newBuilder()
+      .setBookTitle(book.getBookTitle())
+      .setAuthor(book.getAuthor())
+      .setGenre(book.getGenre())
+      .setFormat(book.getFormat())
+      .setLanguage(book.getLanguage())
+      .setPublisher(book.getPublisher())
+      .setSpecialEdition(book.getSpecialEdition())
+      .setPackaging(book.getPackaging());
   }
-
 
   setBookTitle(bookTitle: string): BookBuilder {
     this.bookTitle = bookTitle;
@@ -70,7 +80,7 @@ export class BookBuilder {
   }
 
   build(): Book {
-    const requiredProperties = {
+    const requiredProperties: Record<keyof BookBuilderState, "string"> = {
       bookTitle: "string",
       author: "string",
       genre: "string",
@@ -78,16 +88,20 @@ export class BookBuilder {
       language: "string",
       publisher: "string",
       specialEdition: "string",
-      packaging: "string"
-  };
+      packaging: "string",
+    };
 
-     for (const [prop, type] of Object.entries(requiredProperties)) {
-      const value = (this as any)[prop];
+    for (const prop in requiredProperties) {
+      const key = prop as keyof BookBuilderState;
+      const expectedType = requiredProperties[key];
+      const value = this[key];
+
       if (value === undefined || value === null) {
-        throw new Error(`${prop} is missing`);
+        throw new Error(`${key} is missing`);
       }
-      if (typeof value !== type) {
-        throw new Error(`${prop} must be a ${type}`);
+
+      if (typeof value !== expectedType) {
+        throw new Error(`${key} must be a ${expectedType}`);
       }
     }
 
@@ -124,9 +138,12 @@ export class IdentifiableBookBuilder {
 
   build(): IdentifiableBook {
     if (!this.id || !this.book) {
-      logger.error("Missing required properties, could not build an identiable book");
+      logger.error(
+        "Missing required properties, could not build an identifiable book"
+      );
       throw new Error("Missing required properties");
     }
+
     return new IdentifiableBook(
       this.id,
       this.book.getBookTitle(),
@@ -136,7 +153,7 @@ export class IdentifiableBookBuilder {
       this.book.getLanguage(),
       this.book.getPublisher(),
       this.book.getSpecialEdition(),
-      this.book.getPackaging(),
+      this.book.getPackaging()
     );
   }
 }

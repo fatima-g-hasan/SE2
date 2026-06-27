@@ -1,5 +1,5 @@
 import { IdentifiableOrderItemBuilder, OrderBuilder } from "../model/builders/order.builder";
-import { IIdentifiableOrderItem, IOrder } from "../model/IOrder";
+import { IOrder } from "../model/IOrder";
 import { IMapper } from "./IMapper";
 import { IIdentifiableItem, IItem } from "../model/IItem";
 import { IdentifiableOrderItem } from "../model/Order.model";

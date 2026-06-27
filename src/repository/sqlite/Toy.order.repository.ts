@@ -3,7 +3,6 @@ import { DbException, InitializationException, ItemNotFoundException } from "../
 import logger from "../../util/logger";
 import { ConnectionManager } from "./ConnectionManager";
 import { ItemCategory } from "../../model/IItem";
-import { IdentifiableBook } from "../../model/Book.model";
 import { IdentifiableToy } from "../../model/Toy.model";
 import { SQLToy, SQLToyMapper } from "../../mappers/Toy.mapper";
 
