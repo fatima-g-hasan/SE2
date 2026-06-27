@@ -47,7 +47,7 @@ jobs:
         run: npm install
 
       - name: Run tests
-        run: npm test
+        run: npm test -- --runInBand
 
       - name: Cache the coverage reports
         uses: actions/cache@v4
