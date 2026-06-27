@@ -2,35 +2,32 @@ import { PostgresCakeRepository } from "../../src/repository/postgreSQL/PGCake.o
 import { PGConnectionManager } from "../../src/repository/postgreSQL/PGConnectionManager";
 import dotenv from "dotenv";
 import { makeCake } from "./helper";
-import { DbException, ItemNotFoundException } from "../../src/util/exceptions/repositoryExceptions";
-import { CakeBuilder, IdentifiableCakeBuilder } from "../../src/model/builders/cake.builder";
+import { DbException } from "../../src/util/exceptions/repositoryExceptions";
+import { CakeBuilder } from "../../src/model/builders/cake.builder";
 
 dotenv.config({ path: ".env.test" });
+
+// Integration tests may take several seconds because the Neon database
+// can take time to wake up on the first connection.
+jest.setTimeout(30000);
 
 describe("PostgresCakeRepository CRUD", () => {
   let repo: PostgresCakeRepository;
 
   beforeAll(async () => {
     PGConnectionManager.getClient();
+
+    repo = new PostgresCakeRepository();
+    await repo.init();
   });
 
   beforeEach(async () => {
-    repo = new PostgresCakeRepository();
-    await repo.init();
-
     const client = PGConnectionManager.getClient();
-    await client.query(`DELETE FROM cake;`);
+    await client.query("DELETE FROM cake;");
   });
-
-  
 
   it("should create a new cake and retrieve it", async () => {
     const cake = makeCake("cake-1");
-    const identifiableCake = IdentifiableCakeBuilder
-    .newBuilder()
-    .setId("cake-1")
-    .setCake(cake)
-    .build();
 
     const id = await repo.create(cake);
     expect(id).toBe("cake-1");
@@ -40,7 +37,6 @@ describe("PostgresCakeRepository CRUD", () => {
     expect(found.getFlavor()).toBe(cake.getFlavor());
   });
 
-
   it("should return all cakes", async () => {
     await repo.create(makeCake("c1"));
     await repo.create(makeCake("c2"));
@@ -49,11 +45,10 @@ describe("PostgresCakeRepository CRUD", () => {
 
     expect(result.length).toBe(2);
 
-    const ids = result.map(c => c.getId());
+    const ids = result.map(cake => cake.getId());
     expect(ids).toContain("c1");
     expect(ids).toContain("c2");
   });
-
 
   it("should update an existing cake", async () => {
     const cake = makeCake("cake-1");
@@ -61,7 +56,7 @@ describe("PostgresCakeRepository CRUD", () => {
 
     const updatedCake = makeCake("cake-1");
     const newCakeFlavor = "Vanilla";
-    
+
     updatedCake.getFlavor = () => newCakeFlavor;
 
     await repo.update(updatedCake);
@@ -69,7 +64,6 @@ describe("PostgresCakeRepository CRUD", () => {
     const found = await repo.get("cake-1");
     expect(found.getFlavor()).toBe(newCakeFlavor);
   });
-
 
   it("should delete an existing cake", async () => {
     const cake = makeCake("cake-1");
@@ -82,7 +76,6 @@ describe("PostgresCakeRepository CRUD", () => {
       .toBeInstanceOf(DbException);
   });
 
-
   it("should fail when creating duplicate ID", async () => {
     await repo.create(makeCake("cake-1"));
 
@@ -90,7 +83,6 @@ describe("PostgresCakeRepository CRUD", () => {
       .rejects
       .toThrow();
   });
-
 
   it("should fail when inserting invalid values", async () => {
     const builder = new CakeBuilder()
@@ -107,10 +99,9 @@ describe("PostgresCakeRepository CRUD", () => {
       .setAllergies("None")
       .setSpecialIngredients("None")
       .setPackagingType("Box");
-    
+
     expect(() => builder.build()).toThrow("type is missing");
   });
-
 
   it("should rollback when one query in a transaction fails", async () => {
     const client = repo["client"];
@@ -121,9 +112,21 @@ describe("PostgresCakeRepository CRUD", () => {
 
       await client.query(
         `INSERT INTO cake (
-          id, type, flavor, filling, size, layers, 
-          frostingType, frostingFlavor, decorationType, decorationColor,
-          customMessage, shape, allergies, specialIngredients, packagingType
+          id,
+          type,
+          flavor,
+          filling,
+          size,
+          layers,
+          frostingType,
+          frostingFlavor,
+          decorationType,
+          decorationColor,
+          customMessage,
+          shape,
+          allergies,
+          specialIngredients,
+          packagingType
         )
         VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15);`,
         [
@@ -148,7 +151,7 @@ describe("PostgresCakeRepository CRUD", () => {
       await client.query("INVALID SQL SYNTAX");
 
       await client.query("COMMIT");
-    } catch (err) {
+    } catch {
       await client.query("ROLLBACK");
     }
 

@@ -2,26 +2,29 @@ import { PostgresToyRepository } from "../../src/repository/postgreSQL/PGToy.ord
 import { PGConnectionManager } from "../../src/repository/postgreSQL/PGConnectionManager";
 import { makeToy } from "./helper";
 import dotenv from "dotenv";
-import { DbException, ItemNotFoundException } from "../../src/util/exceptions/repositoryExceptions";
+import { DbException } from "../../src/util/exceptions/repositoryExceptions";
 import { ToyBuilder } from "../../src/model/builders/toy.builder";
 
 dotenv.config({ path: ".env.test" });
+
+// Integration tests may take several seconds because the Neon database
+// can take time to wake up on the first connection.
+jest.setTimeout(30000);
 
 describe("PostgresToyRepository CRUD", () => {
   let repo: PostgresToyRepository;
 
   beforeAll(async () => {
     PGConnectionManager.getClient();
+
+    repo = new PostgresToyRepository();
+    await repo.init();
   });
 
   beforeEach(async () => {
-    repo = new PostgresToyRepository();
-    await repo.init();
-
     const client = PGConnectionManager.getClient();
-    await client.query(`DELETE FROM toy;`);
+    await client.query("DELETE FROM toy;");
   });
-
 
   it("should create a new toy and retrieve it", async () => {
     const toy = makeToy("toy-1");
@@ -34,19 +37,18 @@ describe("PostgresToyRepository CRUD", () => {
     expect(found.getBrand()).toBe(toy.getBrand());
   });
 
-
   it("should return all toys", async () => {
     await repo.create(makeToy("t1"));
     await repo.create(makeToy("t2"));
 
     const result = await repo.getAll();
+
     expect(result.length).toBe(2);
 
-    const ids = result.map(t => t.getId());
+    const ids = result.map(toy => toy.getId());
     expect(ids).toContain("t1");
     expect(ids).toContain("t2");
   });
-
 
   it("should update an existing toy", async () => {
     const toy = makeToy("toy-1");
@@ -61,7 +63,6 @@ describe("PostgresToyRepository CRUD", () => {
     expect(found.getBrand()).toBe("UpdatedBrand");
   });
 
-
   it("should delete an existing toy", async () => {
     const toy = makeToy("toy-1");
     await repo.create(toy);
@@ -73,7 +74,6 @@ describe("PostgresToyRepository CRUD", () => {
       .toBeInstanceOf(DbException);
   });
 
-
   it("should fail when creating duplicate ID", async () => {
     await repo.create(makeToy("toy-1"));
 
@@ -81,7 +81,6 @@ describe("PostgresToyRepository CRUD", () => {
       .rejects
       .toThrow();
   });
-
 
   it("should fail when inserting invalid values", () => {
     const builder = new ToyBuilder()
@@ -94,7 +93,6 @@ describe("PostgresToyRepository CRUD", () => {
     expect(() => builder.build()).toThrow("type is missing");
   });
 
-
   it("should rollback when a query in a transaction fails", async () => {
     const client = repo["client"];
     const toy = makeToy("toy-rollback");
@@ -104,8 +102,15 @@ describe("PostgresToyRepository CRUD", () => {
 
       await client.query(
         `INSERT INTO toy (
-          id, type, ageGroup, brand, material, batteryRequired, educational
-        ) VALUES ($1,$2,$3,$4,$5,$6,$7);`,
+          id,
+          type,
+          ageGroup,
+          brand,
+          material,
+          batteryRequired,
+          educational
+        )
+        VALUES ($1,$2,$3,$4,$5,$6,$7);`,
         [
           toy.getId(),
           toy.getType(),
@@ -120,7 +125,7 @@ describe("PostgresToyRepository CRUD", () => {
       await client.query("INVALID SQL");
 
       await client.query("COMMIT");
-    } catch (err) {
+    } catch {
       await client.query("ROLLBACK");
     }
 

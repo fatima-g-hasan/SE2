@@ -2,26 +2,29 @@ import { PostgresBookRepository } from "../../src/repository/postgreSQL/PGBook.o
 import { PGConnectionManager } from "../../src/repository/postgreSQL/PGConnectionManager";
 import dotenv from "dotenv";
 import { makeBook } from "./helper";
-import { DbException, ItemNotFoundException } from "../../src/util/exceptions/repositoryExceptions";
+import { DbException } from "../../src/util/exceptions/repositoryExceptions";
 import { BookBuilder } from "../../src/model/builders/book.builder";
 
 dotenv.config({ path: ".env.test" });
+
+// Integration tests may take several seconds because the Neon database
+// can take time to wake up on the first connection.
+jest.setTimeout(30000);
 
 describe("PostgresBookRepository CRUD", () => {
   let repo: PostgresBookRepository;
 
   beforeAll(async () => {
     PGConnectionManager.getClient();
+
+    repo = new PostgresBookRepository();
+    await repo.init();
   });
 
   beforeEach(async () => {
-    repo = new PostgresBookRepository();
-    await repo.init();
-
     const client = PGConnectionManager.getClient();
-    await client.query(`DELETE FROM book;`);
+    await client.query("DELETE FROM book;");
   });
-
 
   it("should create a new book and retrieve it", async () => {
     const book = makeBook("book-1");
@@ -34,7 +37,6 @@ describe("PostgresBookRepository CRUD", () => {
     expect(found.getAuthor()).toBe(book.getAuthor());
   });
 
-
   it("should return all books", async () => {
     await repo.create(makeBook("b1"));
     await repo.create(makeBook("b2"));
@@ -43,11 +45,10 @@ describe("PostgresBookRepository CRUD", () => {
 
     expect(result.length).toBe(2);
 
-    const ids = result.map(b => b.getId());
+    const ids = result.map(book => book.getId());
     expect(ids).toContain("b1");
     expect(ids).toContain("b2");
   });
-
 
   it("should update an existing book", async () => {
     const book = makeBook("book-1");
@@ -62,7 +63,6 @@ describe("PostgresBookRepository CRUD", () => {
     expect(found.getAuthor()).toBe("Updated Author");
   });
 
-
   it("should delete an existing book", async () => {
     const book = makeBook("book-1");
     await repo.create(book);
@@ -74,7 +74,6 @@ describe("PostgresBookRepository CRUD", () => {
       .toBeInstanceOf(DbException);
   });
 
-
   it("should fail when creating duplicate ID", async () => {
     await repo.create(makeBook("book-1"));
 
@@ -82,7 +81,6 @@ describe("PostgresBookRepository CRUD", () => {
       .rejects
       .toThrow();
   });
-
 
   it("should fail when inserting invalid values", async () => {
     const builder = new BookBuilder()
@@ -97,7 +95,6 @@ describe("PostgresBookRepository CRUD", () => {
     expect(() => builder.build()).toThrow("bookTitle is missing");
   });
 
-
   it("should rollback when a query in a transaction fails", async () => {
     const client = repo["client"];
     const book = makeBook("book-rollback");
@@ -107,8 +104,15 @@ describe("PostgresBookRepository CRUD", () => {
 
       await client.query(
         `INSERT INTO book (
-          id, bookTitle, author, genre, format, language, 
-          publisher, specialEdition, packaging
+          id,
+          bookTitle,
+          author,
+          genre,
+          format,
+          language,
+          publisher,
+          specialEdition,
+          packaging
         )
         VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9);`,
         [
@@ -127,7 +131,7 @@ describe("PostgresBookRepository CRUD", () => {
       await client.query("INVALID SQL");
 
       await client.query("COMMIT");
-    } catch (err) {
+    } catch {
       await client.query("ROLLBACK");
     }
 
@@ -135,5 +139,4 @@ describe("PostgresBookRepository CRUD", () => {
       .rejects
       .toBeInstanceOf(DbException);
   });
-
 });
