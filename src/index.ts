@@ -1,5 +1,5 @@
 import config from "./config";
-import express, { NextFunction, Request, Response } from "express";
+import express, { Request, Response } from "express";
 import logger from "./util/logger";
 import helmet from "helmet";
 import bodyParser from "body-parser";
