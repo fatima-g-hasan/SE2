@@ -3,6 +3,7 @@ import { IIdentifiableOrderItem, IOrder } from "../model/IOrder";
 import { IMapper } from "./IMapper";
 import { IIdentifiableItem, IItem } from "../model/IItem";
 import { IdentifiableOrderItem } from "../model/Order.model";
+import { SQLiteCake } from "./Cake.mapper";
 
 
 export interface SQLiteOrder {
@@ -158,12 +159,18 @@ export class XMLOrderMapper implements IMapper<Record<string, string>, IOrder> {
     } 
 }
 
+export interface JsonOrderRequest {
+  id: string;
+  price: number;
+  quantity: number;
+  item: SQLiteCake;
+}
 
-export class JsonRequestOrderMapper implements IMapper<any, IdentifiableOrderItem> {
+export class JsonRequestOrderMapper implements IMapper<JsonOrderRequest, IdentifiableOrderItem> {
 
-  constructor(private itemMapper: IMapper<any, IIdentifiableItem>) {}
+  constructor(private itemMapper: IMapper<SQLiteCake, IIdentifiableItem>) {}
   
-  map(data: any): IdentifiableOrderItem {
+  map(data: JsonOrderRequest): IdentifiableOrderItem {
     // extract item and build identifiable item
     const item = this.itemMapper.map(data.item);
 
@@ -182,10 +189,12 @@ export class JsonRequestOrderMapper implements IMapper<any, IdentifiableOrderIte
 
     // return identifiable order item
   }
-  reverseMap(data: IdentifiableOrderItem) {
+  reverseMap(data: IdentifiableOrderItem): JsonOrderRequest {
     return {
-      category: data.getItem().getCategory(),
-      ...data
-    }
+      id: data.getId(),
+      price: data.getPrice(),
+      quantity: data.getQuantity(),
+      item: this.itemMapper.reverseMap(data.getItem())
+    };
   }
 }
