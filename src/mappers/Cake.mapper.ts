@@ -106,8 +106,8 @@ export class SQLiteCakeMapper implements IMapper<SQLiteCake, IdentifiableCake> {
 }
 
 
-export class JsonCakeRequestMapper implements IMapper<any, IdentifiableCake> {
-  map(data: any): IdentifiableCake {
+export class JsonCakeRequestMapper implements IMapper<SQLiteCake, IdentifiableCake> {
+  map(data: SQLiteCake): IdentifiableCake {
     const cake = CakeBuilder.newBuilder()
           .setType(data.type)
           .setFlavor(data.flavor)
@@ -130,7 +130,7 @@ export class JsonCakeRequestMapper implements IMapper<any, IdentifiableCake> {
           .build();
   }
 
-  reverseMap(data: IdentifiableCake): any {
+  reverseMap(data: IdentifiableCake): SQLiteCake {
     return {
       id: data.getId(),
       type: data.getType(),

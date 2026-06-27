@@ -78,9 +78,9 @@ export class SQLBookMapper implements IMapper<SQLBook, IdentifiableBook> {
 }
 
 
-export class JsonBookRequestMapper implements IMapper<any, IdentifiableBook> {
+export class JsonBookRequestMapper implements IMapper<SQLBook, IdentifiableBook> {
   
-  map(data: any): IdentifiableBook {
+  map(data: SQLBook): IdentifiableBook {
     const book = BookBuilder.newBuilder()
       .setBookTitle(data.bookTitle)
       .setAuthor(data.author)
@@ -98,7 +98,7 @@ export class JsonBookRequestMapper implements IMapper<any, IdentifiableBook> {
       .build();
   }
 
-  reverseMap(data: IdentifiableBook): any {
+  reverseMap(data: IdentifiableBook): SQLBook {
     return {
       id: data.getId(),
       bookTitle: data.getBookTitle(),

@@ -67,9 +67,9 @@ export class SQLToyMapper implements IMapper<SQLToy, Toy> {
   }
 }
 
-export class JsonToyRequestMapper implements IMapper<any, IdentifiableToy> {
+export class JsonToyRequestMapper implements IMapper<SQLToy, IdentifiableToy> {
 
-  map(data: any): IdentifiableToy {
+  map(data: SQLToy): IdentifiableToy {
     const toy = ToyBuilder.newBuilder()
       .setType(data.type)
       .setAgeGroup(data.ageGroup)
@@ -85,7 +85,7 @@ export class JsonToyRequestMapper implements IMapper<any, IdentifiableToy> {
       .build();
   }
 
-  reverseMap(data: IdentifiableToy): any {
+  reverseMap(data: IdentifiableToy): SQLToy {
     return {
       id: data.getId(),
       type: data.getType(),

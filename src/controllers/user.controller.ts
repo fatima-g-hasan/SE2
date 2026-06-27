@@ -20,6 +20,7 @@ export class UserController {
       const users = await this.userService.getAllUsers();
       res.status(200).json(users);
     } catch (error){
+      logger.error('Error fetching users', error);
       throw new ServiceException("Error fetching users");
     }
   }
@@ -64,6 +65,7 @@ export class UserController {
         const createdUser = await this.userService.getUserById(userId);
         res.status(201).json(createdUser);
       } catch (error) {
+        logger.error('Error creating user', error);
         res.status(201).json({ message: "User created, but unable to fetch user details", id: userId });
       }
     } catch (error) {

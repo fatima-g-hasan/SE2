@@ -36,7 +36,7 @@ app.use((req, res) => {
 });
 
 // config error handler
-app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
+app.use((err: Error, req: Request, res: Response, _next: NextFunction) => {
   if ( err instanceof HttpException) {
     const httpException = err as HttpException;
     logger.error(" %s [%d] \"%s\" %o", httpException.name, httpException.status, httpException.message, httpException.details || {});
