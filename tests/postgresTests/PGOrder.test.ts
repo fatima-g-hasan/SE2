@@ -1,4 +1,3 @@
-import dotenv from "dotenv";
 import { PostgresOrderRepository } from "../../src/repository/postgreSQL/PGOrder.repository";
 import { PGConnectionManager } from "../../src/repository/postgreSQL/PGConnectionManager";
 import { makeCake } from "./helper";
@@ -6,7 +5,6 @@ import { IdentifiableOrderItemBuilder, OrderBuilder } from "../../src/model/buil
 import { DbException } from "../../src/util/exceptions/repositoryExceptions";
 import { PostgresCakeRepository } from "../../src/repository/postgreSQL/PGCake.order.repository";
 
-dotenv.config({ path: ".env.test" });
 
 describe("PostgresOrderRepository Integration Tests", () => {
   let repo: PostgresOrderRepository;

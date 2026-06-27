@@ -1,11 +1,9 @@
 import { PostgresBookRepository } from "../../src/repository/postgreSQL/PGBook.order.repository";
 import { PGConnectionManager } from "../../src/repository/postgreSQL/PGConnectionManager";
-import dotenv from "dotenv";
 import { makeBook } from "./helper";
 import { DbException } from "../../src/util/exceptions/repositoryExceptions";
 import { BookBuilder } from "../../src/model/builders/book.builder";
 
-dotenv.config({ path: ".env.test" });
 
 // Integration tests may take several seconds because the Neon database
 // can take time to wake up on the first connection.

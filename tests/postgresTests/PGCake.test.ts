@@ -1,11 +1,9 @@
 import { PostgresCakeRepository } from "../../src/repository/postgreSQL/PGCake.order.repository";
 import { PGConnectionManager } from "../../src/repository/postgreSQL/PGConnectionManager";
-import dotenv from "dotenv";
 import { makeCake } from "./helper";
 import { DbException } from "../../src/util/exceptions/repositoryExceptions";
 import { CakeBuilder } from "../../src/model/builders/cake.builder";
 
-dotenv.config({ path: ".env.test" });
 
 // Integration tests may take several seconds because the Neon database
 // can take time to wake up on the first connection.

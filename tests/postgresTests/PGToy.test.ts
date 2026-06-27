@@ -1,11 +1,9 @@
 import { PostgresToyRepository } from "../../src/repository/postgreSQL/PGToy.order.repository";
 import { PGConnectionManager } from "../../src/repository/postgreSQL/PGConnectionManager";
 import { makeToy } from "./helper";
-import dotenv from "dotenv";
 import { DbException } from "../../src/util/exceptions/repositoryExceptions";
 import { ToyBuilder } from "../../src/model/builders/toy.builder";
 
-dotenv.config({ path: ".env.test" });
 
 // Integration tests may take several seconds because the Neon database
 // can take time to wake up on the first connection.

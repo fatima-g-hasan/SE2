@@ -1,6 +1,3 @@
-import dotenv from "dotenv";
-dotenv.config({ path: ".env.test" });
-
 import { PGConnectionManager } from "../../src/repository/postgreSQL/PGConnectionManager";
 
 describe("Neon test connection", () => {

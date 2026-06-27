@@ -31,6 +31,8 @@ jobs:
 
   test:
     runs-on: ubuntu-latest
+    env:
+      TEST_DATABASE_URL: ${{ secrets.TEST_DATABASE_URL }}
     needs: build # Runs only after 'build' succeeds
     steps:
       - name: Grab the code
