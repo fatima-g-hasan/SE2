@@ -1,6 +1,7 @@
 import fs from "fs";
 import path from "path";
 import { readXMLFile, writeXMLFile } from "../../src/util/xmlParser";
+import { XMLToyFile } from "../../src/model/Toy.model";
 
 describe("XML Parser", () => {
   const xmlPath = path.join(__dirname, "toy-orders.xml");
@@ -40,7 +41,7 @@ describe("XML Parser", () => {
 
     fs.writeFileSync(xmlPath, xmlContent);
 
-    const data = readXMLFile(xmlPath);
+    const data = readXMLFile<XMLToyFile>(xmlPath);
     expect(data.data.row.length).toBe(2);
     expect(data.data.row[0].Type).toBe("Plush Toy");
     expect(data.data.row[1].Brand).toBe("BuildSmart");

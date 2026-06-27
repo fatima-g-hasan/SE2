@@ -4,6 +4,7 @@ import { XMLToyMapper } from "../../mappers/Toy.mapper";
 import { IOrder } from "../../model/IOrder";
 import { readXMLFile, writeXMLFile } from "../../util/xmlParser";
 import { DbException } from "../../util/exceptions/repositoryExceptions";
+import { XMLToyFile } from "../../model/Toy.model";
 
 export class ToyOrderRepository extends OrderRepository {
   private mapper = new XMLOrderMapper(new XMLToyMapper());
@@ -14,8 +15,10 @@ export class ToyOrderRepository extends OrderRepository {
 
   protected async load(): Promise<IOrder[]> {
     try {
-      const xmlData = await readXMLFile(this.filePath);
-      return xmlData.map(this.mapper.map.bind(this.mapper));
+      const xmlData = readXMLFile<XMLToyFile>(this.filePath);
+      return xmlData.data.row.map(row => {
+      return this.mapper.map(row);
+    });
 
     } catch (error) {
       throw new DbException("Failed to load toy orders", error as Error)

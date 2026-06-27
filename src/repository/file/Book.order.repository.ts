@@ -4,6 +4,7 @@ import { JSONOrderMapper } from "../../mappers/Order.mapper";
 import { JSONBookMapper } from "../../mappers/Book.mapper";
 import { IOrder } from "../../model/IOrder";
 import { DbException } from "../../util/exceptions/repositoryExceptions";
+import { JSONBookFile } from "../../model/Book.model";
 
 export class BookOrderRepository extends OrderRepository {
   private mapper = new JSONOrderMapper(new JSONBookMapper());
@@ -14,7 +15,7 @@ export class BookOrderRepository extends OrderRepository {
 
   protected async load(): Promise<IOrder[]> {
     try {
-      const jsonData = await readJSONFile(this.filePath);
+      const jsonData = readJSONFile<JSONBookFile>(this.filePath);
       return jsonData.map(this.mapper.map.bind(this.mapper));
     } catch (error) {
       throw new DbException("Failed to load book orders", error as Error);

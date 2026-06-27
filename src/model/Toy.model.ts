@@ -80,3 +80,11 @@ export class IdentifiableToy extends Toy implements IIdentifiableItem {
     return this.id;
   }
 }
+
+export type XMLToyRow = Record<string, string>;
+
+export type XMLToyFile = {
+  data: {
+    row: XMLToyRow[];
+  };
+};
