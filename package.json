@@ -9,7 +9,7 @@
     "build": "tsc",
     "postbuild": "echo Finished build",
     "prestart": "npm run build",
-    "start": "node build/index.js",
+    "start": "node build/src/index.js",
     "dev": "ts-node-dev --respawn src/index.ts",
     "test": "npx cross-env NODE_ENV=test jest"
   },
