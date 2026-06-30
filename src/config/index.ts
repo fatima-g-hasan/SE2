@@ -15,7 +15,7 @@ export default {
       cake: "src/data/cake orders.csv"
     },
 
-    sqlite:"src/data/orders.db",
+    sqlite: process.env.DB_URL || "src/data/orders.db",
 
     json: {
       book: "src/data/book orders.json"
