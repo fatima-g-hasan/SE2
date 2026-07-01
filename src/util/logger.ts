@@ -5,9 +5,9 @@ const { logDir, isDev } = config;
 
 const logFileFormat = winston.format.combine(
   winston.format.timestamp(),
-  winston.format.json(),
   winston.format.splat(),
-  winston.format.errors({ stack: true })
+  winston.format.errors({ stack: true }),
+  winston.format.json()
 );
 
 const logConsoleFormat = winston.format.combine(
