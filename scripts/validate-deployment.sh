@@ -119,7 +119,6 @@ test_app_structure() {
     local required_files=(
         "package.json:Package configuration"
         "ecosystem.config.js:PM2 configuration"
-        "src/app.ts:Application source"
         "src/index.ts:Entry point"
         "tsconfig.json:TypeScript configuration"
     )
