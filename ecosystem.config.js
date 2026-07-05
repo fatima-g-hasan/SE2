@@ -1,6 +1,6 @@
 module.exports = {
   name: 'se2',
-  script: '/build/src/index.js',
+  script: 'build/src/index.js',
   exec_mode: 'fork',
   instances: 1,
   env: {
