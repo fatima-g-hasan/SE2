@@ -111,3 +111,18 @@ jobs:
           draft: false
           prerelease: false
           make_latest: true
+
+  deploy-app:
+    needs: [build, test, lint]
+    if: github.ref == 'ref/heads/ci'
+    steps:
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script:
+            export NVM_DIR=~/.nvm
+            source ~/.nvm/nvm.sh
+            ~/SE2/scripts/deploy-orchestrator.sh
