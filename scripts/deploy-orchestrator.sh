@@ -71,24 +71,32 @@ cleanup() {
 
     # Remove lock file
     if [[ -f "$LOCK_FILE" ]]; then
-        rm -f "$LOCK_FILE"
+        rm -f "$LOCK_FILE" 2>/dev/null || true
         log_info "Removed deployment lock"
     fi
 
     # Kill any background processes
     if [[ -n "${TIMEOUT_PID:-}" ]]; then
+        log_info "Killing timeout process (PID: $TIMEOUT_PID)"
         kill "$TIMEOUT_PID" 2>/dev/null || true
+        # Wait a moment for the process to die
+        sleep 1
+        kill -9 "$TIMEOUT_PID" 2>/dev/null || true
+        log-info "Killed timeout process"
     fi
 
     if [[ $exit_code -ne 0 ]]; then
         log_error "Deployment failed with exit code $exit_code"
         log_info "Check the log file: $LOG_FILE"
 
-        # Send failure notification
-        if command -v wall >/dev/null 2>&1; then
-            echo "🚨 SE2 deployment failed! Check $LOG_FILE for details." | wall 2>/dev/null || true
+        # Send failure notification only if we're in an interactive environment
+        if [[ -t 0 ]] && command -v wall >/dev/null 2>&1; then
+            echo "🚨 SE2 deployment failed! Check ${LOG_FILE:-logs} for details." | wall 2>/dev/null || true
         fi
     fi
+
+    # Force flush any remaining output
+    sync 2>/dev/null || true
 
     exit $exit_code
 }
@@ -193,6 +201,11 @@ run_step() {
 
 # Main deployment function
 main_deployment() {
+    # Detect CI environment and adjust settings
+    if [[ "${CI:-false}" == "true" || "${GITHUB_ACTIONS:-false}" == "true" ]]; then
+    MAX_DEPLOYMENT-TIME=1200 # 20 minutes for CI
+    echo "Detected CI environment, adjusting timeout to ${MAX_DEPLOYMENT-TIME}s"
+
     log_header "🚀 SE2 DEPLOYMENT ORCHESTRATOR"
     log_info "Deployment ID: $DEPLOYMENT_ID"
     log_info "Log file: $LOG_FILE"
@@ -223,8 +236,11 @@ main_deployment() {
 
     # Show quick status
     if command -v pm2 >/dev/null 2>&1; then
+    # Show quick status (only if pm2 is available and not in CI)
+    if command -v pm2 >/dev/null 2>&1 && [["${CI:-false}" != "true"]]; then
         echo -e "\n${CYAN}📊 Current Application Status:${NC}"
         pm2 describe se2 2>/dev/null | grep -E "(status|uptime|memory)" || log_info "PM2 status not available"
+        timeout 10 pm2 describe se2 2>/dev/null | grep -E "(status|uptime|memory)" || log_info "PM2 status not available"
     fi
 
     # Show access URLs
@@ -268,7 +284,13 @@ check_status() {
     fi
 
     # Run health check
-    "${SCRIPT_DIR}/health-check.sh" --quick
+    if timeout 30 "${SCRIPT_DIR}/health-check.sh" --quick 2>/dev/null; then
+        log_success "Health check passed"
+    else
+        log_error "Health check failed or timed out"
+        # Continue to show deployment info but exit with error code at the end
+        local health_failed=true
+    fi
 
     # Show recent deployments
     log_info "Recent deployments:"
@@ -349,29 +371,40 @@ show_logs() {
 case "${1:-deploy}" in
     "deploy")
         main_deployment
+        exit_code=$?
         ;;
     "quick")
         quick_deployment
+        exit_code=$?
         ;;
     "rollback")
         "${SCRIPT_DIR}/rollback.sh" "${2:-previous}"
+        exit_code=$?
         ;;
     "status")
         check_status
+        exit_code=$?
         ;;
     "health")
         "${SCRIPT_DIR}/health-check.sh" "${2:---full}"
+        exit_code=$?
         ;;
     "logs")
         show_logs "${2:-}"
+        exit_code=$?
         ;;
     "help"|"-h"|"--help")
         show_usage
         exit 0
+        exit_code=0
         ;;
     *)
         log_error "Unknown command: $1"
         show_usage
         exit 1
+        exit_code=1
         ;;
 esac
+
+# Ensure we exit with the correct code
+exit ${exit_code:-0}
